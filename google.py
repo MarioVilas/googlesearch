@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "$Id: google.py 690 2010-06-29 15:57:12Z qvasimodo $"
+__version__ = "$Id: google.py 759 2010-07-16 15:27:53Z qvasimodo $"
 
 __all__ = ['search']
 
@@ -51,20 +51,20 @@ url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&nu
 cookie_jar = cookielib.LWPCookieJar(os.path.join(os.getenv('HOME'), '.google-cookie'))
 try:
     cookie_jar.load()
-except cookielib.LoadError:
+except Exception:
     pass
 
 # Request the given URL and return the response page, using the cookie jar
 def get_page(url):
     """
     Request the given URL and return the response page, using the cookie jar.
-    
+
     @type  url: str
     @param url: URL to retrieve.
-    
+
     @rtype:  str
     @return: Web page retrieved for the given URL.
-    
+
     @raise IOError: An exception is raised on error.
     @raise urllib2.URLError: An exception is raised on error.
     @raise urllib2.HTTPError: An exception is raised on error.
@@ -83,31 +83,31 @@ def get_page(url):
 def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
     """
     Search the given query string using Google.
-    
+
     @type  query: str
     @param query: Query string. Must NOT be url-encoded.
-    
+
     @type  tld: str
     @param tld: Top level domain.
-    
+
     @type  lang: str
     @param lang: Languaje.
-    
+
     @type  num: int
     @param num: Number of results per page.
-    
+
     @type  start: int
     @param start: First result to retrieve.
-    
+
     @type  stop: int
     @param stop: Last result to retrieve.
         Use C{None} to keep searching forever.
-    
+
     @type  pause: float
     @param pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    
+
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
         parameter is C{None} the iterator will loop forever.
@@ -157,4 +157,3 @@ if __name__ == "__main__":
     if query:
         for url in search(query, stop=20):
             print(url)
-

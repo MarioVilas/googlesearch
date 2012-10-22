@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: google
-Version: 1.0
+Version: 1.01
 Summary: Python bindings to the Google search engine.
 Home-page: http://breakingcode.wordpress.com/
 Author: Mario Vilas
 Author-email: mvilas@gmail.com
 License: BSD
-Download-URL: http://winappdbg.sourceforge.net/blog/google-1.0.tar.gz
+Download-URL: http://winappdbg.sourceforge.net/blog/google-1.01.tar.gz
 Description: UNKNOWN
 Platform: UNKNOWN
 Classifier: Development Status :: 5 - Production/Stable
