@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "$Id: google.py 892 2012-01-02 16:42:08Z qvasimodo $"
+__version__ = "$Id: google.py 930 2012-02-13 21:21:25Z qvasimodo $"
 
 __all__ = ['search']
 
@@ -53,7 +53,8 @@ if not home_folder:
     home_folder = os.getenv('USERHOME')
     if not home_folder:
         home_folder = '.'   # Use the current folder on error.
-cookie_jar = cookielib.LWPCookieJar(os.path.join(home_folder, '.google-cookie'))
+cookie_jar = cookielib.LWPCookieJar(
+                            os.path.join(home_folder, '.google-cookie'))
 try:
     cookie_jar.load()
 except Exception:
@@ -75,7 +76,8 @@ def get_page(url):
     @raise urllib2.HTTPError: An exception is raised on error.
     """
     request = urllib2.Request(url)
-    request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')
+    request.add_header('User-Agent',
+                       'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')
     cookie_jar.add_cookie_header(request)
     response = urllib2.urlopen(request)
     cookie_jar.extract_cookies(response, request)
@@ -83,6 +85,32 @@ def get_page(url):
     response.close()
     cookie_jar.save()
     return html
+
+# Filter links found in the Google result pages HTML code.
+# Returns None if the link doesn't yield a valid result.
+def filter_result(link):
+    try:
+
+        # Valid results are absolute URLs not pointing to a Google domain
+        # like images.google.com or googleusercontent.com
+        o = urlparse.urlparse(link, 'http')
+        if o.netloc and 'google' not in o.netloc:
+            return link
+
+        # Decode hidden URLs.
+        if link.startswith('/url?'):
+            link = urlparse.parse_qs(o.query)['q'][0]
+
+            # Valid results are absolute URLs not pointing to a Google domain
+            # like images.google.com or googleusercontent.com
+            o = urlparse.urlparse(link, 'http')
+            if o.netloc and 'google' not in o.netloc:
+                return link
+
+    # Otherwise, or on error, return None.
+    except Exception:
+        pass
+    return None
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
@@ -143,25 +171,30 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
         # Request the Google Search results page.
         html = get_page(url)
 
-        # Parse the response and yield every anchored URL.
-        # Discard duplicate URLs.
+        # Parse the response and process every anchored URL.
         soup = BeautifulSoup.BeautifulSoup(html)
         anchors = soup.findAll('a')
         for a in anchors:
+
+            # Get the URL from the anchor tag.
             try:
                 link = a['href']
             except KeyError:
                 continue
+
+            # Filter invalid links and links pointing to Google itself.
+            link = filter_result(link)
+            if not link:
+                continue
+
+            # Discard repeated results.
             h = hash(link)
             if h in hashes:
                 continue
             hashes.add(h)
-            try:
-                o = urlparse.urlparse(link, 'http')
-            except Exception:
-                continue
-            if o.netloc and 'google' not in o.netloc:
-                yield link
+
+            # Yield the result.
+            yield link
 
         # Prepare the URL for the next request.
         start += num

@@ -27,14 +27,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "$Id: setup.py 892 2012-01-02 16:42:08Z qvasimodo $"
+__version__ = "$Id: setup.py 931 2012-02-13 21:25:46Z qvasimodo $"
 
 from distutils.core import setup
 
 setup(name="google",
       provides=['google'],
       requires=['BeautifulSoup'],
-      version='1.02',
+      version='1.03',
       py_modules=['google'],
 ##      scripts=['google.py'],
       description="Python bindings to the Google search engine.",
@@ -42,7 +42,7 @@ setup(name="google",
       author_email = "mvilas@gmail.com",
       license="BSD",
       url="http://breakingcode.wordpress.com/",
-      download_url="http://winappdbg.sourceforge.net/blog/google-1.02.tar.gz",
+      download_url="http://winappdbg.sourceforge.net/blog/google-1.03.tar.gz",
       classifiers=["Development Status :: 5 - Production/Stable",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: BSD License",
