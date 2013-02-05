@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Python bindings to the Google search engine
-# Copyright (c) 2009-2012, Mario Vilas
+# Copyright (c) 2009-2013, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,8 +27,6 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-__version__ = "$Id: google.py 930 2012-02-13 21:21:25Z qvasimodo $"
 
 __all__ = ['search']
 

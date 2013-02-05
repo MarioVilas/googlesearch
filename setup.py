@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2012, Mario Vilas
+# Copyright (c) 2009-2013, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "$Id: setup.py 931 2012-02-13 21:25:46Z qvasimodo $"
-
 from distutils.core import setup
 
 setup(name="google",
       provides=['google'],
       requires=['BeautifulSoup'],
-      version='1.03',
+      version='1.04',
       py_modules=['google'],
 ##      scripts=['google.py'],
       description="Python bindings to the Google search engine.",
@@ -42,7 +40,8 @@ setup(name="google",
       author_email = "mvilas@gmail.com",
       license="BSD",
       url="http://breakingcode.wordpress.com/",
-      download_url="http://winappdbg.sourceforge.net/blog/google-1.03.tar.gz",
+      
+download_url="http://winappdbg.sourceforge.net/blog/google-1.04.tar.gz",
       classifiers=["Development Status :: 5 - Production/Stable",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: BSD License",
