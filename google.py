@@ -32,13 +32,17 @@ __version__ = "$Id: google.py 930 2012-02-13 21:21:25Z qvasimodo $"
 
 __all__ = ['search']
 
-import bs4 as BeautifulSoup
 import cookielib
 import os
 import time
 import urllib
 import urllib2
 import urlparse
+
+try:
+    import bs4 as BeautifulSoup
+except ImportError:
+    import BeautifulSoup
 
 # URL templates to make Google searches.
 url_home          = "http://www.google.%(tld)s/"
