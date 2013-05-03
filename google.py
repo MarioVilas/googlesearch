@@ -182,7 +182,7 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
 
         # Parse the response and process every anchored URL.
         soup = BeautifulSoup(html)
-        anchors = soup.findAll('a')
+        anchors = soup.find(id='search').findAll('a')
         for a in anchors:
 
             # Get the URL from the anchor tag.
@@ -204,6 +204,10 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
 
             # Yield the result.
             yield link
+
+        # End if there are no more results.
+        if not soup.find(id='nav'):
+            break
 
         # Prepare the URL for the next request.
         start += num
