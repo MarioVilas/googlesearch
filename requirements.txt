@@ -1,2 +1,2 @@
-google
-beautifulsoup4
+beautifulsoup4>=4.0
+google>=1.05
