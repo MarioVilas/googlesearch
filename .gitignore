@@ -1,4 +1,5 @@
 *.py[co]
+MANIFEST
 
 # Packages
 *.egg
