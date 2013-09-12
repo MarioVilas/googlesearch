@@ -2,4 +2,3 @@ include README.md
 include MANIFEST.in
 include setup.py
 include google.py
-include requirements.txt
