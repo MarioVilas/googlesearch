@@ -44,11 +44,8 @@ else:
     from urllib2 import Request, urlopen
     from urlparse import urlparse, parse_qs
 
-# Try to use BeautifulSoup 4 if available, fall back to 3 otherwise.
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    from BeautifulSoup import BeautifulSoup
+# Lazy import of BeautifulSoup.
+BeautifulSoup = None
 
 # URL templates to make Google searches.
 url_home          = "http://www.google.%(tld)s/"
@@ -154,6 +151,15 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
     @return: Generator (iterator) that yields found URLs. If the C{stop}
         parameter is C{None} the iterator will loop forever.
     """
+
+    # Lazy import of BeautifulSoup.
+    # Try to use BeautifulSoup 4 if available, fall back to 3 otherwise.
+    global BeautifulSoup
+    if BeautifulSoup is None:
+        try:
+            from bs4 import BeautifulSoup
+        except ImportError:
+            from BeautifulSoup import BeautifulSoup
 
     # Set of hashes for the results found.
     # This is used to avoid repeated results.
