@@ -194,12 +194,12 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
 
         # Parse the response and process every anchored URL.
         soup = BeautifulSoup(html)
-        anchors = soup.find(id='search').findAll('a')
+        anchors = soup.find(id='search').findAll('h3')
         for a in anchors:
 
             # Get the URL from the anchor tag.
             try:
-                link = a['href']
+                link = a.find('a')['href']
             except KeyError:
                 continue
 
