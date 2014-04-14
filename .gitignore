@@ -1,6 +1,9 @@
 *.py[co]
 MANIFEST
 
+# IDE
+.idea/
+
 # Packages
 *.egg
 *.egg-info
