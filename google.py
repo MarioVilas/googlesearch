@@ -49,10 +49,10 @@ BeautifulSoup = None
 
 # URL templates to make Google searches.
 url_home          = "http://www.google.%(tld)s/"
-url_search        = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search"
-url_next_page     = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d"
-url_search_num    = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search"
-url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d"
+url_search        = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&inurl=https"
+url_next_page     = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&inurl=https"
+url_search_num    = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&inurl=https"
+url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&inurl=https"
 
 # Cookie jar. Stored at the user's home folder.
 home_folder = os.getenv('HOME')
@@ -119,7 +119,8 @@ def filter_result(link):
     return None
 
 # Returns a generator that yields URLs.
-def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
+def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0,
+           only_standard=False):
     """
     Search the given query string using Google.
 
@@ -146,6 +147,12 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
     @param pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
+
+    @type  only_standard: bool
+    @param only_standard: If C{True}, only returns the standard results from
+        each page. If C{False}, it returns every possible link from each page,
+        except for those that point back to Google itself. Defaults to C{False}
+        for backwards compatibility with older versions of this module.
 
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
@@ -196,6 +203,12 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0):
         soup = BeautifulSoup(html)
         anchors = soup.find(id='search').findAll('a')
         for a in anchors:
+
+            # Leave only the "standard" results if requested.
+            # Otherwise grab all possible links.
+            if only_standard and (
+                        not a.parent or a.parent.name.lower() != "h3"):
+                continue
 
             # Get the URL from the anchor tag.
             try:
@@ -262,6 +275,9 @@ if __name__ == "__main__":
                       help="last result to retrieve [default: unlimited]")
     parser.add_option("--pause", metavar="SECONDS", type="float", default=2.0,
                       help="pause between HTTP requests [default: 2.0]")
+    parser.add_option("--all", dest="only_standard",
+                      action="store_false", default=True,
+                      help="grab all possible links from result pages")
     (options, args) = parser.parse_args()
     query = ' '.join(args)
     if not query:
