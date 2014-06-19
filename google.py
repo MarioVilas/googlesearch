@@ -119,7 +119,8 @@ def filter_result(link):
     return None
 
 # Returns a generator that yields URLs.
-def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0, stop=None, pause=2.0):
+def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+           stop=None, pause=2.0, only_standard=False):
     """
     Search the given query string using Google.
 
@@ -152,6 +153,12 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0, st
     @param pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
+
+    @type  only_standard: bool
+    @param only_standard: If C{True}, only returns the standard results from
+        each page. If C{False}, it returns every possible link from each page,
+        except for those that point back to Google itself. Defaults to C{False}
+        for backwards compatibility with older versions of this module.
 
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
