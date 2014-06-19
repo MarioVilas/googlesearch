@@ -48,11 +48,11 @@ else:
 BeautifulSoup = None
 
 # URL templates to make Google searches.
-url_home          = "http://www.google.%(tld)s/"
-url_search        = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&inurl=https"
-url_next_page     = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&inurl=https"
-url_search_num    = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&inurl=https"
-url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&inurl=https"
+url_home = "http://www.google.%(tld)s/"
+url_search = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s"
+url_next_page = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s"
+url_search_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s"
+url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s"
 
 # Cookie jar. Stored at the user's home folder.
 home_folder = os.getenv('HOME')
@@ -119,8 +119,7 @@ def filter_result(link):
     return None
 
 # Returns a generator that yields URLs.
-def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0,
-           only_standard=False):
+def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0, stop=None, pause=2.0):
     """
     Search the given query string using Google.
 
@@ -132,6 +131,12 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0,
 
     @type  lang: str
     @param lang: Languaje.
+
+    @type  tbs: str
+    @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+
+    @type  safe: str
+    @param safe: Safe search.
 
     @type  num: int
     @param num: Number of results per page.
@@ -147,12 +152,6 @@ def search(query, tld='com', lang='en', num=10, start=0, stop=None, pause=2.0,
     @param pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-
-    @type  only_standard: bool
-    @param only_standard: If C{True}, only returns the standard results from
-        each page. If C{False}, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to C{False}
-        for backwards compatibility with older versions of this module.
 
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
@@ -267,6 +266,10 @@ if __name__ == "__main__":
                       help="top level domain to use [default: com]")
     parser.add_option("--lang", metavar="LANGUAGE", type="string", default="en",
                       help="produce results in the given language [default: en]")
+    parser.add_option("--tbs", metavar="TBS", type="string", default="0",
+                      help="produce results from period [default: 0]")
+    parser.add_option("--safe", metavar="SAFE", type="string", default="off",
+                      help="kids safe search [default: off]")
     parser.add_option("--num", metavar="NUMBER", type="int", default=10,
                       help="number of results per page [default: 10]")
     parser.add_option("--start", metavar="NUMBER", type="int", default=0,
