@@ -49,10 +49,10 @@ BeautifulSoup = None
 
 # URL templates to make Google searches.
 url_home = "http://www.google.%(tld)s/"
-url_search = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s"
-url_next_page = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s"
-url_search_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s"
-url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s"
+url_search = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_next_page = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_search_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_next_page_num = "http://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
 
 # Cookie jar. Stored at the user's home folder.
 home_folder = os.getenv('HOME')
@@ -65,6 +65,7 @@ try:
     cookie_jar.load()
 except Exception:
     pass
+
 
 # Request the given URL and return the response page, using the cookie jar.
 def get_page(url):
@@ -92,6 +93,7 @@ def get_page(url):
     cookie_jar.save()
     return html
 
+
 # Filter links found in the Google result pages HTML code.
 # Returns None if the link doesn't yield a valid result.
 def filter_result(link):
@@ -118,9 +120,47 @@ def filter_result(link):
         pass
     return None
 
+
+# Shortcut to search images
+# Beware, this does not return the image link.
+def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                  stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='isch')
+
+
+# Shortcut to search images
+def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='nws')
+
+
+# Shortcut to search videos
+def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                  stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='vid')
+
+
+# Shortcut to search shop
+def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='shop')
+
+
+# Shortcut to search books
+def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                 stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='bks')
+
+
+# Shortcut to search apps
+def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+                stop=None, pause=2.0, only_standard=False):
+    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, tpe='app')
+
+
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False):
+           stop=None, pause=2.0, only_standard=False, tpe=''):
     """
     Search the given query string using Google.
 
@@ -159,6 +199,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         each page. If C{False}, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to C{False}
         for backwards compatibility with older versions of this module.
+
+    @type  tpe: str
+    @param tpe: Search type (images, videos, news, shopping, books, apps)
+            Use the following values {videos: 'vid', images: 'isch', news: 'nws',
+                                      shopping: 'shop', books: 'bks', applications: 'app'}
 
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
@@ -213,7 +258,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             # Leave only the "standard" results if requested.
             # Otherwise grab all possible links.
             if only_standard and (
-                        not a.parent or a.parent.name.lower() != "h3"):
+                    not a.parent or a.parent.name.lower() != "h3"):
                 continue
 
             # Get the URL from the anchor tag.
@@ -253,10 +298,13 @@ if __name__ == "__main__":
     from optparse import OptionParser, IndentedHelpFormatter
 
     class BannerHelpFormatter(IndentedHelpFormatter):
+
         "Just a small tweak to optparse to be able to print a banner."
+
         def __init__(self, banner, *argv, **argd):
             self.banner = banner
             IndentedHelpFormatter.__init__(self, *argv, **argd)
+
         def format_usage(self, usage):
             msg = IndentedHelpFormatter.format_usage(self, usage)
             return '%s\n%s' % (self.banner, msg)
@@ -293,7 +341,7 @@ if __name__ == "__main__":
     if not query:
         parser.print_help()
         sys.exit(2)
-    params = [(k,v) for (k,v) in options.__dict__.items() if not k.startswith('_')]
+    params = [(k, v) for (k, v) in options.__dict__.items() if not k.startswith('_')]
     params = dict(params)
 
     # Run the query.
