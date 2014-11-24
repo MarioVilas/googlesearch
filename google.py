@@ -160,7 +160,7 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False, tpe=''):
+           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe=''):
     """
     Search the given query string using Google.
 
@@ -243,6 +243,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
     while not stop or start < stop:
+        if extra_params:
+            for k, v in extra_params.iteritems():
+                url += url + ('&%s=%s' % (k, v))
+                print url
 
         # Sleep between requests.
         time.sleep(pause)
