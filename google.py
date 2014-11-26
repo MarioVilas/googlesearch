@@ -200,6 +200,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         except for those that point back to Google itself. Defaults to C{False}
         for backwards compatibility with older versions of this module.
 
+    @type  extra_params: dict
+    @param extra_params: A dictionary of extra HTTP GET parameters, which must be URL encoded.
+        For example if you don't want google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
+
     @type  tpe: str
     @param tpe: Search type (images, videos, news, shopping, books, apps)
             Use the following values {videos: 'vid', images: 'isch', news: 'nws',
