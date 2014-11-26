@@ -243,10 +243,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
     while not stop or start < stop:
-        if extra_params:
-            for k, v in extra_params.iteritems():
-                url += url + ('&%s=%s' % (k, v))
-                print url
+
+        # Append extra GET_parameters to URL
+        for k, v in extra_params.iteritems():
+            url += url + ('&%s=%s' % (k, v))
 
         # Sleep between requests.
         time.sleep(pause)
