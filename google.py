@@ -226,6 +226,15 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # Prepare the search string.
     query = quote_plus(query)
 
+    # Check extra_params for overlapping
+    for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
+        if builtin_param in extra_params.keys():
+            raise ValueError(
+                'GET parameter "%s" is overlapping with \
+                the built-in GET parameter',
+                builtin_param
+            )
+
     # Grab the cookie from the home page.
     get_page(url_home % vars())
 
