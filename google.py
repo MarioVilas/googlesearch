@@ -128,7 +128,7 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10, star
     return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='isch')
 
 
-# Shortcut to search images
+# Shortcut to search news
 def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
                 stop=None, pause=2.0, only_standard=False, extra_params={}):
     return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='nws')
