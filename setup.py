@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2014, Mario Vilas
+# Copyright (c) 2009-2015, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,34 +27,34 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
+from distutils.core import setup
 from os import chdir
 from os.path import abspath, join, split
+from warnings import catch_warnings, simplefilter
 
 here = split(abspath(__file__))[0]
 chdir(here)
 
-from ez_setup import use_setuptools
-use_setuptools()
-
-from distutils.core import setup
-
-setup(name="google",
-      provides=['google'],
-      requires=['beautifulsoup4'],
-      install_requires=['beautifulsoup4'],
-      py_modules=['google'],
-      scripts=['google.py'],
-      version='1.06',
-      description="Python bindings to the Google search engine.",
-      long_description=open(join(here, "README.md"), "rU").read(),
-      author="Mario Vilas",
-      author_email="mvilas@gmail.com",
-      url="http://breakingcode.wordpress.com/",
-      classifiers=["Development Status :: 5 - Production/Stable",
-                   "Intended Audience :: Developers",
-                   "License :: OSI Approved :: BSD License",
-                   "Environment :: Console",
-                   "Programming Language :: Python",
-                   "Topic :: Software Development :: Libraries :: Python Modules",
-                   ],
-      )
+with catch_warnings():
+    simplefilter('ignore')
+    setup(name='google',
+          provides=['google'],
+          requires=['beautifulsoup4'],
+          packages=['google'],
+          scripts=[join('scripts', 'google')],
+          version="1.07",
+          description="Python bindings to the Google search engine.",
+          long_description=open(join(here, 'README.md'), 'rU').read(),
+          author="Mario Vilas",
+          author_email="mvilas@gmail.com",
+          url="http://breakingcode.wordpress.com/",
+          classifiers=["Development Status :: 5 - Production/Stable",
+                       "Intended Audience :: Developers",
+                       "License :: OSI Approved :: BSD License",
+                       "Environment :: Console",
+                       "Programming Language :: Python",
+                       "Topic :: Software Development :: Libraries :: Python Modules",
+                       ],
+          )
