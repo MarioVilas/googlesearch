@@ -27,34 +27,48 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-from distutils.core import setup
 from os import chdir
 from os.path import abspath, join, split
-from warnings import catch_warnings, simplefilter
 
+# Make sure we are standing in the correct directory.
+# Old versions of distutils didn't take care of this.
 here = split(abspath(__file__))[0]
 chdir(here)
 
-with catch_warnings():
-    simplefilter('ignore')
-    setup(name='google',
-          provides=['google'],
-          requires=['beautifulsoup4'],
-          packages=['google'],
-          scripts=[join('scripts', 'google')],
-          version="1.07",
-          description="Python bindings to the Google search engine.",
-          long_description=open(join(here, 'README.md'), 'rU').read(),
-          author="Mario Vilas",
-          author_email="mvilas@gmail.com",
-          url="http://breakingcode.wordpress.com/",
-          classifiers=["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Developers",
-                       "License :: OSI Approved :: BSD License",
-                       "Environment :: Console",
-                       "Programming Language :: Python",
-                       "Topic :: Software Development :: Libraries :: Python Modules",
-                       ],
-          )
+# Package metadata.
+metadata = dict(
+    name='google',
+    provides=['google'],
+    requires=['beautifulsoup4'],
+    packages=['google'],
+    scripts=[join('scripts', 'google')],
+    version="1.7",
+    description="Python bindings to the Google search engine.",
+    author="Mario Vilas",
+    author_email="mvilas@gmail.com",
+    url="http://breakingcode.wordpress.com/",
+    classifiers=["Development Status :: 5 - Production/Stable",
+                 "Intended Audience :: Developers",
+                 "License :: OSI Approved :: BSD License",
+                 "Environment :: Console",
+                 "Programming Language :: Python",
+                 "Topic :: Software Development :: Libraries :: Python Modules",
+                 ],
+)
+
+# Prefer setuptools over the old distutils.
+# If setuptools is available, use install_requires.
+try:
+    from setuptools import setup
+    metadata['install_requires'] = metadata['requires']
+except ImportError:
+    from distutils.core import setup
+
+# Get the long description from the readme file.
+try:
+    metadata['long_description'] = open(join(here, 'README.md'), 'rU').read()
+except Exception:
+    pass
+
+# Run the setup script.
+setup(**metadata)
