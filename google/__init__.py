@@ -258,8 +258,12 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
     while not stop or start < stop:
 
+        try:  # Is it python<3?
+            iter_extra_params = extra_params.iteritems()
+        except AttributeError:  # Or python>3?
+            iter_extra_params = extra_params.items()
         # Append extra GET_parameters to URL
-        for k, v in extra_params.iteritems():
+        for k, v in iter_extra_params:
             url += url + ('&%s=%s' % (k, v))
 
         # Sleep between requests.
