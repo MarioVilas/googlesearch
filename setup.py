@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2015, Mario Vilas
+# Copyright (c) 2009-2016, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ metadata = dict(
     requires=['beautifulsoup4'],
     packages=['google'],
     scripts=[join('scripts', 'google')],
-    version="1.7",
+    version="1.8",
     description="Python bindings to the Google search engine.",
     author="Mario Vilas",
     author_email="mvilas@gmail.com",
