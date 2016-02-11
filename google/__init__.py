@@ -162,7 +162,7 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=
 def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
           extra_params={}, tpe=''):
     gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard, extra_params, tpe)
-    return gen.next()
+    return next(gen)
     
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
