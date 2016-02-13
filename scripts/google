@@ -83,3 +83,7 @@ params = dict(params)
 # Run the query.
 for url in google.search(query, **params):
     print(url)
+    try:
+        sys.stdout.flush()
+    except:
+        pass
