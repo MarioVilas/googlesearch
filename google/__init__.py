@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__all__ = ['search']
+__all__ = ['search', 'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps', 'lucky']
 
 import os
 import sys
@@ -227,8 +227,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     if BeautifulSoup is None:
         try:
             from bs4 import BeautifulSoup
+            is_bs4 = True
         except ImportError:
             from BeautifulSoup import BeautifulSoup
+            is_bs4 = False
 
     # Set of hashes for the results found.
     # This is used to avoid repeated results.
@@ -279,7 +281,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         html = get_page(url)
 
         # Parse the response and process every anchored URL.
-        soup = BeautifulSoup(html, 'html.parser')
+        if is_bs4:
+            soup = BeautifulSoup(html, 'html.parser')
+        else:
+            soup = BeautifulSoup(html)
         anchors = soup.find(id='search').findAll('a')
         for a in anchors:
 
