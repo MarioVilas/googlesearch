@@ -44,8 +44,12 @@ else:
     from urllib2 import Request, urlopen
     from urlparse import urlparse, parse_qs
 
-# Lazy import of BeautifulSoup.
-BeautifulSoup = None
+try:
+    from bs4 import BeautifulSoup
+    is_bs4 = True
+except ImportError:
+    from BeautifulSoup import BeautifulSoup
+    is_bs4 = False
 
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
@@ -163,7 +167,7 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
           extra_params={}, tpe=''):
     gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard, extra_params, tpe)
     return next(gen)
-    
+
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, pause=2.0, only_standard=False, extra_params={}, tpe=''):
@@ -220,18 +224,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     @return: Generator (iterator) that yields found URLs. If the C{stop}
         parameter is C{None} the iterator will loop forever.
     """
-
-    # Lazy import of BeautifulSoup.
-    # Try to use BeautifulSoup 4 if available, fall back to 3 otherwise.
-    global BeautifulSoup
-    if BeautifulSoup is None:
-        try:
-            from bs4 import BeautifulSoup
-            is_bs4 = True
-        except ImportError:
-            from BeautifulSoup import BeautifulSoup
-            is_bs4 = False
-
     # Set of hashes for the results found.
     # This is used to avoid repeated results.
     hashes = set()
