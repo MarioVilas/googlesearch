@@ -31,6 +31,7 @@
 __all__ = ['search', 'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps', 'lucky']
 
 import os
+import random
 import sys
 import time
 
@@ -70,14 +71,19 @@ try:
 except Exception:
     pass
 
+with open('user_agents.txt') as fp:
+    randomUserAgents = fp.readlines()
 
 # Request the given URL and return the response page, using the cookie jar.
-def get_page(url):
+def get_page(url, randomizeUserAgent):
     """
     Request the given URL and return the response page, using the cookie jar.
 
     @type  url: str
     @param url: URL to retrieve.
+
+    @type  randomizeUserAgent: bool
+    @param randomizeUserAgent: Randomize the User-Agent.
 
     @rtype:  str
     @return: Web page retrieved for the given URL.
@@ -87,8 +93,11 @@ def get_page(url):
     @raise urllib2.HTTPError: An exception is raised on error.
     """
     request = Request(url)
-    request.add_header('User-Agent',
-                       'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')
+    if randomizeUserAgent:
+        request.add_header('User-Agent', random.choice(randomUserAgents))
+    else:
+        request.add_header('User-Agent',
+                           'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')     
     cookie_jar.add_cookie_header(request)
     response = urlopen(request)
     cookie_jar.extract_cookies(response, request)
@@ -170,7 +179,7 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe=''):
+           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', randomizeUserAgent=False):
     """
     Search the given query string using Google.
 
@@ -241,7 +250,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), randomizeUserAgent)
 
     # Prepare the URL of the first request.
     if start:
@@ -270,7 +279,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url)
+        html = get_page(url, randomizeUserAgent)
 
         # Parse the response and process every anchored URL.
         if is_bs4:
