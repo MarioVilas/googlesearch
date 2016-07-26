@@ -69,6 +69,8 @@ parser.add_option("--stop", metavar="NUMBER", type="int", default=0,
                   help="last result to retrieve [default: unlimited]")
 parser.add_option("--pause", metavar="SECONDS", type="float", default=2.0,
                   help="pause between HTTP requests [default: 2.0]")
+parser.add_option("--ua", metavar="USERAGENT", default=False,
+                  help="Randomize the User-Agent")
 parser.add_option("--all", dest="only_standard",
                   action="store_false", default=True,
                   help="grab all possible links from result pages")
