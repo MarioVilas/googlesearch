@@ -69,11 +69,11 @@ parser.add_option("--stop", metavar="NUMBER", type="int", default=0,
                   help="last result to retrieve [default: unlimited]")
 parser.add_option("--pause", metavar="SECONDS", type="float", default=2.0,
                   help="pause between HTTP requests [default: 2.0]")
-parser.add_option("--ua", metavar="USERAGENT", default=False,
-                  help="Randomize the User-Agent")
+parser.add_option("--rua", metavar="USERAGENT", action="store_true", default=False,
+                  help="Randomize the User-Agent [default: no]")
 parser.add_option("--all", dest="only_standard",
                   action="store_false", default=True,
-                  help="grab all possible links from result pages")
+                  help="grab all possible links from result pages [default: only standard results]")
 (options, args) = parser.parse_args()
 query = ' '.join(args)
 if not query:
@@ -81,6 +81,12 @@ if not query:
     sys.exit(2)
 params = [(k, v) for (k, v) in options.__dict__.items() if not k.startswith('_')]
 params = dict(params)
+
+# Randomize the user agent if requested.
+if "rua" in params:
+    rua = params.pop("rua")
+    if rua:
+        params["user_agent"] = google.get_random_user_agent()
 
 # Run the query.
 for url in google.search(query, **params):

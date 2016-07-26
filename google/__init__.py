@@ -71,19 +71,40 @@ try:
 except Exception:
     pass
 
-with open('user_agents.txt') as fp:
-    randomUserAgents = fp.readlines()
+# Default user agent, unless instructed by the user to change it.
+USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)'
+
+# Load the list of valid user agents from the install folder.
+install_folder = os.path.abspath(os.path.split(__file__)[0])
+user_agents_file = os.path.join(install_folder, 'user_agents.txt')
+try:
+    with open('user_agents.txt') as fp:
+        user_agents_list = [_.strip() for _ in fp.readlines()]
+except Exception:
+    user_agents_list = [USER_AGENT]
+
+
+# Get a random user agent.
+def get_random_user_agent():
+    """
+    Get a random user agent string.
+
+    @rtype:  str
+    @return: Random user agent string.
+    """
+    return random.choice(user_agents_list)
+
 
 # Request the given URL and return the response page, using the cookie jar.
-def get_page(url, randomizeUserAgent):
+def get_page(url, user_agent=None):
     """
     Request the given URL and return the response page, using the cookie jar.
 
     @type  url: str
     @param url: URL to retrieve.
 
-    @type  randomizeUserAgent: bool
-    @param randomizeUserAgent: Randomize the User-Agent.
+    @type  user_agent: str
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
 
     @rtype:  str
     @return: Web page retrieved for the given URL.
@@ -92,12 +113,10 @@ def get_page(url, randomizeUserAgent):
     @raise urllib2.URLError: An exception is raised on error.
     @raise urllib2.HTTPError: An exception is raised on error.
     """
+    if user_agent is None:
+        user_agent = USER_AGENT
     request = Request(url)
-    if randomizeUserAgent:
-        request.add_header('User-Agent', random.choice(randomUserAgents))
-    else:
-        request.add_header('User-Agent',
-                           'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)')     
+    request.add_header('User-Agent', USER_AGENT)
     cookie_jar.add_cookie_header(request)
     response = urlopen(request)
     cookie_jar.extract_cookies(response, request)
@@ -179,7 +198,7 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', randomizeUserAgent=False):
+           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google.
 
@@ -229,6 +248,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             Use the following values {videos: 'vid', images: 'isch', news: 'nws',
                                       shopping: 'shop', books: 'bks', applications: 'app'}
 
+    @type  user_agent: str
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
         parameter is C{None} the iterator will loop forever.
@@ -250,7 +272,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars(), randomizeUserAgent)
+    get_page(url_home % vars())
 
     # Prepare the URL of the first request.
     if start:
@@ -279,7 +301,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url, randomizeUserAgent)
+        html = get_page(url)
 
         # Parse the response and process every anchored URL.
         if is_bs4:
