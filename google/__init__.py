@@ -209,7 +209,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     @param tld: Top level domain.
 
     @type  lang: str
-    @param lang: Languaje.
+    @param lang: Language.
 
     @type  tbs: str
     @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
