@@ -78,7 +78,7 @@ USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)'
 install_folder = os.path.abspath(os.path.split(__file__)[0])
 user_agents_file = os.path.join(install_folder, 'user_agents.txt')
 try:
-    with open('user_agents_file') as fp:
+    with open(user_agents_file) as fp:
         user_agents_list = [_.strip() for _ in fp.readlines()]
 except Exception:
     user_agents_list = [USER_AGENT]
