@@ -492,4 +492,3 @@ def ngd(term1, term2):
     denomin = lN - min([lhits1, lhits2])
 
     return numerator / denomin
-

@@ -49,13 +49,14 @@ metadata = dict(
     author="Mario Vilas",
     author_email="mvilas@gmail.com",
     url="http://breakingcode.wordpress.com/",
-    classifiers=["Development Status :: 5 - Production/Stable",
-                 "Intended Audience :: Developers",
-                 "License :: OSI Approved :: BSD License",
-                 "Environment :: Console",
-                 "Programming Language :: Python",
-                 "Topic :: Software Development :: Libraries :: Python Modules",
-                 ],
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Environment :: Console",
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+     ],
 )
 
 # Prefer setuptools over the old distutils.
