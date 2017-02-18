@@ -1,0 +1,26 @@
+language: python
+
+# Supported CPython versions:
+# https://en.wikipedia.org/wiki/CPython#Version_history
+python:
+ - pypy3
+ - pypy
+ - 2.7
+ - 3.6
+ - 3.5
+ - 3.4
+ - 3.3
+
+# Use container-based infrastructure
+sudo: false
+
+install:
+ - pip install pep8 pyflakes
+
+script:
+ # Static analysis
+ - pyflakes .
+ - pep8 --statistics --count .
+
+matrix:
+  fast_finish: true
