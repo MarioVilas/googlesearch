@@ -35,15 +35,11 @@ import random
 import sys
 import time
 
-if sys.version_info[0] > 2:
-    from http.cookiejar import LWPCookieJar
-    from urllib.request import Request, urlopen
-    from urllib.parse import quote_plus, urlparse, parse_qs
-else:
-    from cookielib import LWPCookieJar
-    from urllib import quote_plus
-    from urllib2 import Request, urlopen
-    from urlparse import urlparse, parse_qs
+
+from cookielib import LWPCookieJar
+from urllib import quote_plus
+from urllib2 import Request, urlopen
+from urlparse import urlparse, parse_qs
 
 try:
     from bs4 import BeautifulSoup
@@ -78,7 +74,7 @@ USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)'
 install_folder = os.path.abspath(os.path.split(__file__)[0])
 user_agents_file = os.path.join(install_folder, 'user_agents.txt')
 try:
-    with open('user_agents.txt') as fp:
+    with open(user_agents_file) as fp:
         user_agents_list = [_.strip() for _ in fp.readlines()]
 except Exception:
     user_agents_list = [USER_AGENT]
@@ -96,7 +92,7 @@ def get_random_user_agent():
 
 
 # Request the given URL and return the response page, using the cookie jar.
-def get_page(url, user_agent=None):
+def get_page(url, user_agent=None, proxies = {}):
     """
     Request the given URL and return the response page, using the cookie jar.
 
@@ -113,6 +109,15 @@ def get_page(url, user_agent=None):
     @raise urllib2.URLError: An exception is raised on error.
     @raise urllib2.HTTPError: An exception is raised on error.
     """
+    
+    #setup proxy
+    opener = urllib2.build_opener(
+                     urllib2.HTTPHandler(),
+                     urllib2.HTTPSHandler(),
+                     urllib2.ProxyHandler( proxies ))
+    urllib2.install_opener(opener)
+    
+    
     if user_agent is None:
         user_agent = USER_AGENT
     request = Request(url)
@@ -198,7 +203,8 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', user_agent=None):
+           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', 
+           user_agent=None, proxies={}):
     """
     Search the given query string using Google.
 
@@ -272,7 +278,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(),proxies = proxies)
 
     # Prepare the URL of the first request.
     if start:
