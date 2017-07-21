@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__all__ = ['search', 'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps', 'lucky']
+__all__ = ['search', 'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps', 'lucky', 'hits', 'ngd']
 
 import os
 import random
@@ -347,3 +347,107 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             url = url_next_page % vars()
         else:
             url = url_next_page_num % vars()
+
+
+# Returns a generator that yields URLs.
+def hits(query, tld='com', lang='en', tbs='0', safe='off',
+         extra_params={}, tpe='', user_agent=None):
+    """
+    Search the given query string using Google.
+
+    @type  query: str
+    @param query: Query string. Must NOT be url-encoded.
+
+    @type  tld: str
+    @param tld: Top level domain.
+
+    @type  lang: str
+    @param lang: Languaje.
+
+    @type  tbs: str
+    @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+
+    @type  safe: str
+    @param safe: Safe search.
+
+    @type  extra_params: dict
+    @param extra_params: A dictionary of extra HTTP GET parameters, which must be URL encoded.
+        For example if you don't want google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
+
+    @type  tpe: str
+    @param tpe: Search type (images, videos, news, shopping, books, apps)
+            Use the following values {videos: 'vid', images: 'isch', news: 'nws',
+                                      shopping: 'shop', books: 'bks', applications: 'app'}
+
+    @type  user_agent: str
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+
+    """
+    # Set of hashes for the results found.
+    # This is used to avoid repeated results.
+    hashes = set()
+
+    # Prepare the search string.
+    query = quote_plus(query)
+
+    # Check extra_params for overlapping
+    for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
+        if builtin_param in extra_params.keys():
+            raise ValueError(
+                'GET parameter "%s" is overlapping with \
+                the built-in GET parameter',
+                builtin_param
+            )
+
+    # Grab the cookie from the home page.
+    get_page(url_home % vars())
+
+    url = url_search % vars()
+
+    try:  # Is it python<3?
+        iter_extra_params = extra_params.iteritems()
+    except AttributeError:  # Or python>3?
+        iter_extra_params = extra_params.items()
+    # Append extra GET_parameters to URL
+    for k, v in iter_extra_params:
+        url += url + ('&%s=%s' % (k, v))
+
+    # Request the Google Search results page.
+    html = get_page(url)
+
+    # Parse the response and returns the numer of hits as interger.
+    if is_bs4:
+        soup = BeautifulSoup(html, 'html.parser')
+    else:
+        soup = BeautifulSoup(html)
+
+    tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
+    return int(tag.text.split()[1].replace(',', ''))
+
+
+def ngd(term1, term2):
+    """ Returnd the Normalized Google distance between words.
+
+    @type  term1: str
+    @param term1: First term to compare
+
+    @type  term1: str
+    @param term1: Second term to compare
+
+    For more info, refer to:
+    https://en.wikipedia.org/wiki/Normalized_Google_distance
+    """
+
+    import math
+    lhits1 = math.log10(hits(term1))
+    lhits2 = math.log10(hits(term2))
+    lhits_mix = math.log10(hits('"'+term1+'" "'+ term2 + '"'))
+    npages = hits('the')
+    fix = 1000
+
+    lN = math.log10(npages * fix)
+    numerator = max([lhits1, lhits2]) - lhits_mix
+    denomin = lN - min([lhits1, lhits2])
+
+    return numerator / denomin
