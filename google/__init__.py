@@ -39,6 +39,8 @@ if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
     from urllib.request import Request, urlopen
     from urllib.parse import quote_plus, urlparse, parse_qs
+    from functools import wraps
+    import dill
 else:
     from cookielib import LWPCookieJar
     from urllib import quote_plus
@@ -51,6 +53,23 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup
     is_bs4 = False
+
+if sys.version_info[0] > 2:
+    def cached(func):
+        func.cache = {}
+        # dill.dump(func.cache, open('.cached_data', 'wb'))
+        @wraps(func)
+        def wrapper(*args):
+            try:
+                # func.cache = dill.load(open('.cached_data', 'rb'))
+                result = func.cache[args]
+                print('GOOGLE RESULT:', result)
+                return result
+            except KeyError:
+                func.cache[args] = result = func(*args)
+                # dill.dump(func.cache, open('.cached_data', 'wb'))
+                return result
+        return wrapper
 
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
@@ -350,7 +369,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
 
 # Returns a generator that yields URLs.
-def hits(query, tld='com', lang='en', tbs='0', safe='off',
+@cached
+def hits(query, tld='ch', lang='en', tbs='0', safe='off',
          extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google.
@@ -423,7 +443,18 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
         soup = BeautifulSoup(html)
 
     tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
-    return int(tag.text.split()[1].replace(',', ''))
+
+    # Parse the string:
+    print('GOOGLE_RESULT:', tag.text)
+    tag_words = tag.text.split()
+    if len(tag_words) < 2:
+        number = .01
+    elif tag_words[0].lower() == 'about':
+        number = int(tag_words[1].replace(',', ''))
+    else:
+        number = int(tag_words[0])
+
+    return number
 
 
 def ngd(term1, term2):
@@ -443,7 +474,10 @@ def ngd(term1, term2):
     lhits1 = math.log10(hits(term1))
     lhits2 = math.log10(hits(term2))
     lhits_mix = math.log10(hits('"'+term1+'" "'+ term2 + '"'))
-    npages = hits('the')
+    print('"'+term1+'" "'+ term2 + '"')
+    # npages = hits('the')
+    # Suppose not going to change often
+    npages = 27270000000
     fix = 1000
 
     lN = math.log10(npages * fix)
