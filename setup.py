@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2017, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,14 +37,14 @@ chdir(here)
 
 # Package metadata.
 metadata = dict(
-    name='google',
-    provides=['google'],
+    name='googlesearch',
+    provides=['googlesearch'],
     requires=['beautifulsoup4'],
-    packages=['google'],
+    packages=['googlesearch'],
     scripts=[join('scripts', 'google')],
-    package_data={'google': ['user_agents.txt']},
+    package_data={'googlesearch': ['user_agents.txt']},
     include_package_data=True,
-    version="1.9.3",
+    version="2.0.0",
     description="Python bindings to the Google search engine.",
     author="Mario Vilas",
     author_email="mvilas@gmail.com",

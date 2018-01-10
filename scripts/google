@@ -29,7 +29,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import google
+
+from googlesearch import search, get_random_user_agent
 
 from optparse import OptionParser, IndentedHelpFormatter
 
@@ -49,7 +50,7 @@ class BannerHelpFormatter(IndentedHelpFormatter):
 formatter = BannerHelpFormatter(
     "Python script to use the Google search engine\n"
     "By Mario Vilas (mvilas at gmail dot com)\n"
-    "https://github.com/MarioVilas/google\n"
+    "https://github.com/MarioVilas/googlesearch\n"
 )
 parser = OptionParser(formatter=formatter)
 parser.set_usage("%prog [options] query")
@@ -86,10 +87,10 @@ params = dict(params)
 if "rua" in params:
     rua = params.pop("rua")
     if rua:
-        params["user_agent"] = google.get_random_user_agent()
+        params["user_agent"] = get_random_user_agent()
 
 # Run the query.
-for url in google.search(query, **params):
+for url in search(query, **params):
     print(url)
     try:
         sys.stdout.flush()
