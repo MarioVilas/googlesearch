@@ -34,7 +34,8 @@ __all__ = [
     'search',
 
     # Specialized search functions.
-    'search_images', 'search_news', 'search_videos', 'search_shop',
+    'search_images', 'search_news',
+    'search_videos', 'search_shop',
     'search_books', 'search_apps',
 
     # Shortcut for "get lucky" search.
@@ -309,7 +310,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Prepare domain list if it exists.
     if domains:
-        domain_query = '+OR+'.join(domains)
+        domain_query = '+OR+'.join('site:' + domain for domain in domains)
     else:
         domain_query = ''
 
@@ -453,7 +454,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     # Prepare domain list if it exists.
     if domains:
-        domain_query = '+OR+'.join(domains)
+        domain_query = '+OR+'.join('site:' + domain for domain in domains)
     else:
         domain_query = ''
 
