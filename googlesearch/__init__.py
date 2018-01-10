@@ -34,7 +34,8 @@ __all__ = [
     'search',
 
     # Specialized search functions.
-    'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps',
+    'search_images', 'search_news', 'search_videos', 'search_shop',
+    'search_books', 'search_apps',
 
     # Shortcut for "get lucky" search.
     'lucky',
@@ -71,10 +72,16 @@ except ImportError:
 
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
-url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
-url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
-url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
-url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
+             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
+                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
+                 "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
+                 "tbm=%(tpe)s"
+url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&" \
+                    "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
+                    "safe=%(safe)s&tbm=%(tpe)s"
 
 # Cookie jar. Stored at the user's home folder.
 home_folder = os.getenv('HOME')
@@ -121,7 +128,8 @@ def get_page(url, user_agent=None):
     @param url: URL to retrieve.
 
     @type  user_agent: str
-    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the
+        default.
 
     @rtype:  str
     @return: Web page retrieved for the given URL.
@@ -172,50 +180,66 @@ def filter_result(link):
 
 # Shortcut to search images
 # Beware, this does not return the image link.
-def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                  stop=None, pause=2.0, domains=None, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='isch')
+def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                  start=0, stop=None, pause=2.0, domains=None,
+                  only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='isch')
 
 
 # Shortcut to search news
-def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='nws')
+def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                start=0, stop=None, domains=None, pause=2.0,
+                only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='nws')
 
 
 # Shortcut to search videos
-def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                  stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='vid')
+def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                  start=0, stop=None, domains=None, pause=2.0,
+                  only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='vid')
 
 
 # Shortcut to search shop
-def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='shop')
+def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                start=0, stop=None, domains=None, pause=2.0,
+                only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='shop')
 
 
 # Shortcut to search books
-def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                 stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='bks')
+def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                 start=0, stop=None, domains=None, pause=2.0,
+                 only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='bks')
 
 
 # Shortcut to search apps
-def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='app')
+def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+                start=0, stop=None, domains=None, pause=2.0,
+                only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+                  pause, only_standard, extra_params, tpe='app')
+
 
 # Shortcut to single-item search. Evaluates the iterator to return the single
 # URL as a string.
-def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
-          extra_params={}, tpe=''):
-    gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard, extra_params, tpe)
+def lucky(query, tld='com', lang='en', tbs='0', safe='off',
+          only_standard=False, extra_params={}, tpe=''):
+    gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard,
+                 extra_params, tpe)
     return next(gen)
+
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}, tpe='', user_agent=None):
+           stop=None, domains=None, pause=2.0, only_standard=False,
+           extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google.
 
@@ -229,7 +253,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     @param lang: Language.
 
     @type  tbs: str
-    @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    @param tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
 
     @type  safe: str
     @param safe: Safe search.
@@ -242,7 +267,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     @type  stop: int
     @param stop: Last result to retrieve.
-        Use C{None} to keep searching forever.
+            Use C{None} to keep searching forever.
 
     @type  domains: list
     @param domains: A list of web domains to constrain the search.
@@ -259,17 +284,20 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         for backwards compatibility with older versions of this module.
 
     @type  extra_params: dict
-    @param extra_params: A dictionary of extra HTTP GET parameters, which must be URL encoded.
-        For example if you don't want google to filter similar results you can set the extra_params to
-        {'filter': '0'} which will append '&filter=0' to every query.
+    @param extra_params: A dictionary of extra HTTP GET parameters, which must
+        be URL encoded. For example if you don't want google to filter similar
+        results you can set the extra_params to {'filter': '0'} which will
+        append '&filter=0' to every query.
 
     @type  tpe: str
     @param tpe: Search type (images, videos, news, shopping, books, apps)
-            Use the following values {videos: 'vid', images: 'isch', news: 'nws',
-                                      shopping: 'shop', books: 'bks', applications: 'app'}
+            Use the following values {videos: 'vid', images: 'isch',
+                                      news: 'nws', shopping: 'shop',
+                                      books: 'bks', applications: 'app'}
 
     @type  user_agent: str
-    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the
+        default.
 
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
@@ -281,7 +309,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Prepare domain list if it exists.
     if domains:
-        domains_formatted = ['site:' + domain for domain in domains]
         domain_query = '+OR+'.join(domains)
     else:
         domain_query = ''
@@ -375,10 +402,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         else:
             url = url_next_page_num % vars()
 
+
 # Returns only the number of Google hits for the given search query.
 # This is the number reported by Google itself, NOT by scraping.
 def hits(query, tld='com', lang='en', tbs='0', safe='off',
-           domains=None, extra_params={}, tpe='', user_agent=None):
+         domains=None, extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google and return the number of hits.
 
@@ -394,7 +422,8 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     @param lang: Language.
 
     @type  tbs: str
-    @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    @param tbs: Time limits (i.e "qdr:h" => last hour,
+            "qdr:d" => last 24 hours, "qdr:m" => last month).
 
     @type  safe: str
     @param safe: Safe search.
@@ -403,17 +432,20 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     @param domains: A list of web domains to constrain the search.
 
     @type  extra_params: dict
-    @param extra_params: A dictionary of extra HTTP GET parameters, which must be URL encoded.
-        For example if you don't want google to filter similar results you can set the extra_params to
-        {'filter': '0'} which will append '&filter=0' to every query.
+    @param extra_params: A dictionary of extra HTTP GET parameters, which must
+        be URL encoded. For example if you don't want google to filter similar
+        results you can set the extra_params to {'filter': '0'} which will
+        append '&filter=0' to every query.
 
     @type  tpe: str
     @param tpe: Search type (images, videos, news, shopping, books, apps)
-            Use the following values {videos: 'vid', images: 'isch', news: 'nws',
-                                      shopping: 'shop', books: 'bks', applications: 'app'}
+            Use the following values {videos: 'vid', images: 'isch',
+                                      news: 'nws', shopping: 'shop',
+                                      books: 'bks', applications: 'app'}
 
     @type  user_agent: str
-    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the
+            default.
 
     @rtype:  int
     @return: Number of Google hits for the given search query.
@@ -421,7 +453,6 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     # Prepare domain list if it exists.
     if domains:
-        domains_formatted = ['site:' + domain for domain in domains]
         domain_query = '+OR+'.join(domains)
     else:
         domain_query = ''
@@ -465,6 +496,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
     return int(tag.text.split()[1].replace(',', ''))
 
+
 def ngd(term1, term2):
     """ Return the Normalized Google distance between words.
 
@@ -492,4 +524,3 @@ def ngd(term1, term2):
     denomin = lN - min([lhits1, lhits2])
 
     return numerator / denomin
-
