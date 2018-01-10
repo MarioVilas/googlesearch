@@ -281,7 +281,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Prepare domain list if it exists.
     if domains:
-        domains_formatted = ['site:' + domain for domain in domains]
         domain_query = '+OR+'.join(domains)
     else:
         domain_query = ''
@@ -421,7 +420,6 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     # Prepare domain list if it exists.
     if domains:
-        domains_formatted = ['site:' + domain for domain in domains]
         domain_query = '+OR+'.join(domains)
     else:
         domain_query = ''
