@@ -37,7 +37,7 @@ chdir(here)
 
 # Package metadata.
 metadata = dict(
-    name='googlesearch',
+    name='google',
     provides=['googlesearch'],
     requires=['beautifulsoup4'],
     packages=['googlesearch'],
