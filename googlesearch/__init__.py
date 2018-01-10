@@ -156,38 +156,38 @@ def filter_result(link):
 # Shortcut to search images
 # Beware, this does not return the image link.
 def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                  stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='isch')
+                  stop=None, pause=2.0, domains=None, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='isch')
 
 
 # Shortcut to search news
 def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='nws')
+                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='nws')
 
 
 # Shortcut to search videos
 def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                  stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='vid')
+                  stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='vid')
 
 
 # Shortcut to search shop
 def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='shop')
+                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='shop')
 
 
 # Shortcut to search books
 def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                 stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='bks')
+                 stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='bks')
 
 
 # Shortcut to search apps
 def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-                stop=None, pause=2.0, only_standard=False, extra_params={}):
-    return search(query, tld, lang, tbs, safe, num, start, stop, pause, only_standard, extra_params, tpe='app')
+                stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}):
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, pause, only_standard, extra_params, tpe='app')
 
 # Shortcut to single-item search. Evaluates the iterator to return the single
 # URL as a string.
@@ -198,7 +198,7 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off', only_standard=False,
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, pause=2.0, only_standard=False, extra_params={}, tpe='', user_agent=None):
+           stop=None, domains=None, pause=2.0, only_standard=False, extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google.
 
@@ -226,6 +226,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     @type  stop: int
     @param stop: Last result to retrieve.
         Use C{None} to keep searching forever.
+
+    @type  domains: list
+    @param domains: A list of web domains to constrain the search.
 
     @type  pause: float
     @param pause: Lapse to wait between HTTP requests.
@@ -259,8 +262,15 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # This is used to avoid repeated results.
     hashes = set()
 
+    # Prepare domain list if it exists
+    if domains:
+        domains_formatted = ['site:' + domain for domain in domains]
+        domain_query = '+OR+'.join(domains)
+    else:
+        domain_query = ''
+
     # Prepare the search string.
-    query = quote_plus(query)
+    query = quote_plus(query + '+' + domain_query)
 
     # Check extra_params for overlapping
     for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
