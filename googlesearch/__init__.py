@@ -28,12 +28,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__all__ = ['search', 'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps', 'lucky']
+__all__ = [
+
+    # Main search function.
+    'search',
+
+    # Specialized search functions.
+    'search_images', 'search_news', 'search_videos', 'search_shop', 'search_books', 'search_apps',
+
+    # Shortcut for "get lucky" search.
+    'lucky',
+
+    # Computations based on the number of Google hits.
+    'hits', 'ngd',
+
+    # Miscellaneous utility functions.
+    'get_random_user_agent',
+]
 
 import os
 import random
 import sys
 import time
+import math
 
 if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
@@ -262,7 +279,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # This is used to avoid repeated results.
     hashes = set()
 
-    # Prepare domain list if it exists
+    # Prepare domain list if it exists.
     if domains:
         domains_formatted = ['site:' + domain for domain in domains]
         domain_query = '+OR+'.join(domains)
@@ -357,3 +374,122 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             url = url_next_page % vars()
         else:
             url = url_next_page_num % vars()
+
+# Returns only the number of Google hits for the given search query.
+# This is the number reported by Google itself, NOT by scraping.
+def hits(query, tld='com', lang='en', tbs='0', safe='off',
+           domains=None, extra_params={}, tpe='', user_agent=None):
+    """
+    Search the given query string using Google and return the number of hits.
+
+    @note: This is the number reported by Google itself, NOT by scraping.
+
+    @type  query: str
+    @param query: Query string. Must NOT be url-encoded.
+
+    @type  tld: str
+    @param tld: Top level domain.
+
+    @type  lang: str
+    @param lang: Language.
+
+    @type  tbs: str
+    @param tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+
+    @type  safe: str
+    @param safe: Safe search.
+
+    @type  domains: list
+    @param domains: A list of web domains to constrain the search.
+
+    @type  extra_params: dict
+    @param extra_params: A dictionary of extra HTTP GET parameters, which must be URL encoded.
+        For example if you don't want google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
+
+    @type  tpe: str
+    @param tpe: Search type (images, videos, news, shopping, books, apps)
+            Use the following values {videos: 'vid', images: 'isch', news: 'nws',
+                                      shopping: 'shop', books: 'bks', applications: 'app'}
+
+    @type  user_agent: str
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the default.
+
+    @rtype:  int
+    @return: Number of Google hits for the given search query.
+    """
+
+    # Prepare domain list if it exists.
+    if domains:
+        domains_formatted = ['site:' + domain for domain in domains]
+        domain_query = '+OR+'.join(domains)
+    else:
+        domain_query = ''
+
+    # Prepare the search string.
+    query = quote_plus(query + '+' + domain_query)
+
+    # Check extra_params for overlapping
+    for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
+        if builtin_param in extra_params.keys():
+            raise ValueError(
+                'GET parameter "%s" is overlapping with \
+                the built-in GET parameter',
+                builtin_param
+            )
+
+    # Grab the cookie from the home page.
+    get_page(url_home % vars())
+
+    # Prepare the URL of the first (and in this cases ONLY) request.
+    url = url_search % vars()
+
+    try:  # Is it python<3?
+        iter_extra_params = extra_params.iteritems()
+    except AttributeError:  # Or python>3?
+        iter_extra_params = extra_params.items()
+    # Append extra GET_parameters to URL
+    for k, v in iter_extra_params:
+        url += url + ('&%s=%s' % (k, v))
+
+    # Request the Google Search results page.
+    html = get_page(url)
+
+    # Parse the response.
+    if is_bs4:
+        soup = BeautifulSoup(html, 'html.parser')
+    else:
+        soup = BeautifulSoup(html)
+
+    # Get the number of hits.
+    tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
+    return int(tag.text.split()[1].replace(',', ''))
+
+def ngd(term1, term2):
+    """ Return the Normalized Google distance between words.
+
+    For more info, refer to:
+    https://en.wikipedia.org/wiki/Normalized_Google_distance
+
+    @type  term1: str
+    @param term1: First term to compare.
+
+    @type  term1: str
+    @param term1: Second term to compare.
+
+    @rtype: float
+    @return: Normalized Google distance between words.
+    """
+
+    lhits1 = math.log10(hits(term1))
+    lhits2 = math.log10(hits(term2))
+    lhits_mix = math.log10(hits('"' + term1 + '" "' + term2 + '"'))
+    npages = hits('the')
+    fix = 1000
+
+    lN = math.log10(npages * fix)
+    numerator = max([lhits1, lhits2]) - lhits_mix
+    denomin = lN - min([lhits1, lhits2])
+
+    return numerator / denomin
+
