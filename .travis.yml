@@ -9,18 +9,17 @@ python:
  - 3.6
  - 3.5
  - 3.4
- - 3.3
 
 # Use container-based infrastructure
 sudo: false
 
 install:
- - pip install pep8 pyflakes
+ - pip install pycodestyle pyflakes
 
 script:
  # Static analysis
  - pyflakes .
- - pep8 --statistics --count .
+ - pycodestyle --statistics --count .
 
 matrix:
   fast_finish: true
