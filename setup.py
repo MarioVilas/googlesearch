@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2017, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ metadata = dict(
     scripts=[join('scripts', 'google')],
     package_data={'googlesearch': ['user_agents.txt']},
     include_package_data=True,
-    version="2.0.0",
+    version="2.0.1",
     description="Python bindings to the Google search engine.",
     author="Mario Vilas",
     author_email="mvilas@gmail.com",
