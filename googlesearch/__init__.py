@@ -308,6 +308,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # This is used to avoid repeated results.
     hashes = set()
 
+    # Count the number of links yielded
+    count = 0
+
     # Prepare domain list if it exists.
     if domains:
         domain_query = '+OR+'.join('site:' + domain for domain in domains)
@@ -391,6 +394,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
             # Yield the result.
             yield link
+
+            count += 1
+            if stop and count >= stop:
+                return
 
         # End if there are no more results.
         if not soup.find(id='nav'):
