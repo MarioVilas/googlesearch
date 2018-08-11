@@ -462,11 +462,12 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     # Prepare domain list if it exists.
     if domains:
         domain_query = '+OR+'.join('site:' + domain for domain in domains)
+        domain_query = '+' + domain_query
     else:
         domain_query = ''
 
     # Prepare the search string.
-    query = quote_plus(query + '+' + domain_query)
+    query = quote_plus(query + domain_query)
 
     # Check extra_params for overlapping
     for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
