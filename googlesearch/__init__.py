@@ -151,6 +151,35 @@ def get_page(url, user_agent=None):
     cookie_jar.save()
     return html
 
+# Request the given URL without cookie and return the response page, using the cookie jar.
+def get_page_without_cookie(url, user_agent=None):
+    """
+    Request the given URL without cookie and return the response page.
+
+    @type  url: str
+    @param url: URL to retrieve.
+
+    @type  user_agent: str
+    @param user_agent: User agent for the HTTP requests. Use C{None} for the
+        default.
+
+    @rtype:  str
+    @return: Web page retrieved for the given URL.
+
+    @raise IOError: An exception is raised on error.
+    @raise urllib2.URLError: An exception is raised on error.
+    @raise urllib2.HTTPError: An exception is raised on error.
+    """
+    if user_agent is None:
+        user_agent = USER_AGENT
+
+    request = Request(url)
+    request.add_header('User-Agent', USER_AGENT)
+
+    response = urlopen(request)
+    html = response.read()
+    response.close()
+    return html
 
 # Filter links found in the Google result pages HTML code.
 # Returns None if the link doesn't yield a valid result.
@@ -240,7 +269,7 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, domains=None, pause=2.0, only_standard=False,
-           extra_params={}, tpe='', user_agent=None):
+           extra_params={}, tpe='', user_agent=None, use_cookie=True):
     """
     Search the given query string using Google.
 
@@ -303,6 +332,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     @rtype:  generator
     @return: Generator (iterator) that yields found URLs. If the C{stop}
         parameter is C{None} the iterator will loop forever.
+
+    @:type use_cookie: bool
+    @param use_cookie: If C{True} search using cookie.
     """
     # Set of hashes for the results found.
     # This is used to avoid repeated results.
@@ -330,7 +362,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), user_agent)
 
     # Prepare the URL of the first request.
     if start:
@@ -359,7 +391,10 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url)
+        if use_cookie is True:
+            html = get_page(url, user_agent)
+        else:
+            html = get_page_without_cookie(url, user_agent)
 
         # Parse the response and process every anchored URL.
         if is_bs4:
