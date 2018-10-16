@@ -148,7 +148,10 @@ def get_page(url, user_agent=None):
     cookie_jar.extract_cookies(response, request)
     html = response.read()
     response.close()
-    cookie_jar.save()
+    try:
+        cookie_jar.save()
+    except:
+        pass
     return html
 
 
