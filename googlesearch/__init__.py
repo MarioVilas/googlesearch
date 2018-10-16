@@ -150,7 +150,7 @@ def get_page(url, user_agent=None):
     response.close()
     try:
         cookie_jar.save()
-    except:
+    except Exception:
         pass
     return html
 
