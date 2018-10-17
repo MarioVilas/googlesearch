@@ -316,12 +316,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Prepare domain list if it exists.
     if domains:
-        domain_query = '+OR+'.join('site:' + domain for domain in domains)
-    else:
-        domain_query = ''
+        query = query + ' ' + ' OR '.join(
+                                'site:' + domain for domain in domains)
 
     # Prepare the search string.
-    query = quote_plus(query + '+' + domain_query)
+    query = quote_plus(query)
 
     # Check extra_params for overlapping
     for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
