@@ -17,3 +17,8 @@ Installing
 ----------
 
     pip install google
+
+Reference documentation
+-----------------------
+
+https://python-googlesearch.readthedocs.io/en/latest/
