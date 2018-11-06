@@ -28,26 +28,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__all__ = [
-
-    # Main search function.
-    'search',
-
-    # Specialized search functions.
-    'search_images', 'search_news',
-    'search_videos', 'search_shop',
-    'search_books', 'search_apps',
-
-    # Shortcut for "get lucky" search.
-    'lucky',
-
-    # Computations based on the number of Google hits.
-    'hits', 'ngd',
-
-    # Miscellaneous utility functions.
-    'get_random_user_agent',
-]
-
 import os
 import random
 import sys
@@ -70,6 +50,26 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup
     is_bs4 = False
+
+__all__ = [
+
+    # Main search function.
+    'search',
+
+    # Specialized search functions.
+    'search_images', 'search_news',
+    'search_videos', 'search_shop',
+    'search_books', 'search_apps',
+
+    # Shortcut for "get lucky" search.
+    'lucky',
+
+    # Computations based on the number of Google hits.
+    'hits', 'ngd',
+
+    # Miscellaneous utility functions.
+    'get_random_user_agent',
+]
 
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
@@ -136,7 +136,8 @@ def get_page(url, user_agent=None):
     Request the given URL and return the response page, using the cookie jar.
 
     :param str url: URL to retrieve.
-    :param str user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: str
     :return: Web page retrieved for the given URL.
@@ -198,12 +199,15 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -211,17 +215,19 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     # Set of hashes for the results found.
     # This is used to avoid repeated results.
@@ -336,18 +342,21 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                   only_standard=False, extra_params={}):
     """
     Shortcut to search images.
-    
+
     :note: Beware, this does not return the image link.
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -355,17 +364,19 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='isch')
@@ -381,12 +392,15 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -394,17 +408,19 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='nws')
@@ -420,12 +436,15 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -433,17 +452,19 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='vid')
@@ -459,12 +480,15 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -472,17 +496,19 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='shop')
@@ -498,12 +524,15 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -511,20 +540,23 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='bks')
+
 
 # Shortcut to search apps.
 def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
@@ -536,12 +568,15 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -549,20 +584,23 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: generator of str
-    :return: Generator (iterator) that yields found URLs. If the stop parameter is None the iterator will loop forever.
+    :return: Generator (iterator) that yields found URLs.
+        If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='app')
+
 
 # Shortcut to single-item search.
 # Evaluates the iterator to return the single URL as a string.
@@ -574,12 +612,15 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -587,14 +628,15 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: str
     :return: URL found by Google.
@@ -616,12 +658,15 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour, "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve. Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain the search.
+    :param int or None stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list of str or None domains: A list of web domains to constrain
+        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
@@ -629,14 +674,15 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
         each page. If False, it returns every possible link from each page,
         except for those that point back to Google itself. Defaults to False
         for backwards compatibility with older versions of this module.
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET parameters, which must
-        be URL encoded. For example if you don't want google to filter similar
-        results you can set the extra_params to {'filter': '0'} which will
-        append '&filter=0' to every query.
+    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
     :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
         news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
-    :param str or None user_agent: User agent for the HTTP requests. Use None for the default.
+    :param str or None user_agent: User agent for the HTTP requests.
+        Use None for the default.
 
     :rtype: int
     :return: Number of Google hits for the given search query.
@@ -714,4 +760,3 @@ def ngd(term1, term2):
     denomin = lN - min([lhits1, lhits2])
 
     return numerator / denomin
-
