@@ -3,7 +3,7 @@ googlesearch
 
 Google search from Python.
 
-https://breakingcode.wordpress.com/2010/06/29/google-search-python/
+https://python-googlesearch.readthedocs.io/en/latest/
 
 Usage example
 -------------
@@ -17,8 +17,3 @@ Installing
 ----------
 
     pip install google
-
-Reference documentation
------------------------
-
-https://python-googlesearch.readthedocs.io/en/latest/
