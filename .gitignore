@@ -20,10 +20,6 @@ develop-eggs
 # Installer logs
 pip-log.txt
 
-# Automatically generated documentation
-html/
-pdf/
-
 # Unit test / coverage reports
 .coverage
 .tox
