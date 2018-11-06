@@ -305,9 +305,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     @type  tpe: str
     @param tpe: Search type (images, videos, news, shopping, books, apps)
-            Use the following values {videos: 'vid', images: 'isch',
-                                      news: 'nws', shopping: 'shop',
-                                      books: 'bks', applications: 'app'}
+        Use the following values \{videos: 'vid', images: 'isch',
+        news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'\}
 
     @type  user_agent: str
     @param user_agent: User agent for the HTTP requests. Use C{None} for the
@@ -459,9 +458,8 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     @type  tpe: str
     @param tpe: Search type (images, videos, news, shopping, books, apps)
-            Use the following values {videos: 'vid', images: 'isch',
-                                      news: 'nws', shopping: 'shop',
-                                      books: 'bks', applications: 'app'}
+        Use the following values \{videos: 'vid', images: 'isch',
+        news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'\}
 
     @type  user_agent: str
     @param user_agent: User agent for the HTTP requests. Use C{None} for the
@@ -527,8 +525,8 @@ def ngd(term1, term2):
     @type  term1: str
     @param term1: First term to compare.
 
-    @type  term1: str
-    @param term1: Second term to compare.
+    @type  term2: str
+    @param term2: Second term to compare.
 
     @rtype: float
     @return: Normalized Google distance between words.
