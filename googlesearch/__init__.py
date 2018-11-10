@@ -732,7 +732,10 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     # Get the number of hits.
     tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
-    return int(tag.text.split()[1].replace(',', '').replace('.', ''))
+    hits_text_parts = tag.text.split()
+    if len(hits_text_parts) < 3:
+        return 0
+    return int(hits_text_parts[1].replace(',', '').replace('.', ''))
 
 
 def ngd(term1, term2):
