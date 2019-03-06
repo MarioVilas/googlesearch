@@ -149,7 +149,7 @@ def get_page(url, user_agent=None):
     if user_agent is None:
         user_agent = USER_AGENT
     request = Request(url)
-    request.add_header('User-Agent', USER_AGENT)
+    request.add_header('User-Agent', user_agent)
     cookie_jar.add_cookie_header(request)
     response = urlopen(request)
     cookie_jar.extract_cookies(response, request)
@@ -254,7 +254,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), user_agent)
 
     # Prepare the URL of the first request.
     if start:
@@ -283,7 +283,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url)
+        html = get_page(url, user_agent)
 
         # Parse the response and process every anchored URL.
         if is_bs4:
@@ -708,7 +708,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), user_agent)
 
     # Prepare the URL of the first (and in this cases ONLY) request.
     url = url_search % vars()
@@ -722,7 +722,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
         url += url + ('&%s=%s' % (k, v))
 
     # Request the Google Search results page.
-    html = get_page(url)
+    html = get_page(url, user_agent)
 
     # Parse the response.
     if is_bs4:
