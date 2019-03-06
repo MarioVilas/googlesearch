@@ -269,7 +269,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             url = url_search_num % vars()
 
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
-    while not stop or start < stop:
+    while not stop or count < stop:
+        # Remeber last count to detect the end of results
+        last_count = count
 
         try:  # Is it python<3?
             iter_extra_params = extra_params.iteritems()
@@ -333,7 +335,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
                 return
 
         # End if there are no more results.
-        if not soup.find(id='nav'):
+        if last_count == count:
             break
 
         # Prepare the URL for the next request.
