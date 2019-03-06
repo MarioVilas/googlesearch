@@ -290,7 +290,16 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             soup = BeautifulSoup(html, 'html.parser')
         else:
             soup = BeautifulSoup(html)
-        anchors = soup.find(id='search').findAll('a')
+        try:
+            anchors = soup.find(id='search').findAll('a')
+            # Sometimes (depending on the User-agent) there is
+            # no id "search" in html response
+        except AttributeError:
+            # Remove links of the top bar
+            gbar = soup.find(id='gbar')
+            if gbar:
+                gbar.clear()
+            anchors = soup.findAll('a')
         for a in anchors:
 
             # Leave only the "standard" results if requested.
