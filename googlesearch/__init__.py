@@ -149,7 +149,7 @@ def get_page(url, user_agent=None):
     if user_agent is None:
         user_agent = USER_AGENT
     request = Request(url)
-    request.add_header('User-Agent', USER_AGENT)
+    request.add_header('User-Agent', user_agent)
     cookie_jar.add_cookie_header(request)
     response = urlopen(request)
     cookie_jar.extract_cookies(response, request)
@@ -254,7 +254,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), user_agent)
 
     # Prepare the URL of the first request.
     if start:
@@ -269,7 +269,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             url = url_search_num % vars()
 
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
-    while not stop or start < stop:
+    while not stop or count < stop:
+        # Remeber last count to detect the end of results
+        last_count = count
 
         try:  # Is it python<3?
             iter_extra_params = extra_params.iteritems()
@@ -283,14 +285,23 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url)
+        html = get_page(url, user_agent)
 
         # Parse the response and process every anchored URL.
         if is_bs4:
             soup = BeautifulSoup(html, 'html.parser')
         else:
             soup = BeautifulSoup(html)
-        anchors = soup.find(id='search').findAll('a')
+        try:
+            anchors = soup.find(id='search').findAll('a')
+            # Sometimes (depending on the User-agent) there is
+            # no id "search" in html response
+        except AttributeError:
+            # Remove links of the top bar
+            gbar = soup.find(id='gbar')
+            if gbar:
+                gbar.clear()
+            anchors = soup.findAll('a')
         for a in anchors:
 
             # Leave only the "standard" results if requested.
@@ -324,7 +335,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
                 return
 
         # End if there are no more results.
-        if not soup.find(id='nav'):
+        if last_count == count:
             break
 
         # Prepare the URL for the next request.
@@ -708,7 +719,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars())
+    get_page(url_home % vars(), user_agent)
 
     # Prepare the URL of the first (and in this cases ONLY) request.
     url = url_search % vars()
@@ -722,7 +733,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
         url += url + ('&%s=%s' % (k, v))
 
     # Request the Google Search results page.
-    html = get_page(url)
+    html = get_page(url, user_agent)
 
     # Parse the response.
     if is_bs4:
