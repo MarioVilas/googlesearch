@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2018, Mario Vilas
+# Copyright (c) 2009-2019, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
