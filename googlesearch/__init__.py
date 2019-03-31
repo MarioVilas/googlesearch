@@ -72,15 +72,15 @@ __all__ = [
 ]
 
 # URL templates to make Google searches.
-url_home = "https://www.google.%(tld)s/"
-url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
-url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
+url_home = "https://www.google.%(tld)s/?gl=%(gl)s"
+url_search = "https://www.google.%(tld)s/search?gl=%(gl)s&hl=%(lang)s&q=%(query)s&" \
+             "btnK=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+url_next_page = "https://www.google.%(tld)s/search?gl=%(gl)s&hl=%(lang)s&q=%(query)s&" \
                 "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
-url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-                 "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
+url_search_num = "https://www.google.%(tld)s/search?gl=%(gl)s&hl=%(lang)s&q=%(query)s&" \
+                 "num=%(num)d&btnK=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
                  "tbm=%(tpe)s"
-url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&" \
+url_next_page_num = "https://www.google.%(tld)s/search?gl=%(gl)s&hl=%(lang)s&" \
                     "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
                     "safe=%(safe)s&tbm=%(tpe)s"
 
@@ -190,7 +190,7 @@ def filter_result(link):
 
 
 # Returns a generator that yields URLs.
-def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+def search(query, tld='com',gl=None, lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, domains=None, pause=2.0, only_standard=False,
            extra_params={}, tpe='', user_agent=None):
     """
@@ -198,6 +198,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -245,7 +246,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     query = quote_plus(query)
 
     # Check extra_params for overlapping
-    for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
+    for builtin_param in ('hl', 'q', 'btnK', 'tbs', 'safe', 'tbm'):
         if builtin_param in extra_params.keys():
             raise ValueError(
                 'GET parameter "%s" is overlapping with \
@@ -348,7 +349,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
 # Shortcut to search images.
 # Beware, this does not return the image link.
-def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_images(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=10,
                   start=0, stop=None, pause=2.0, domains=None,
                   only_standard=False, extra_params={}):
     """
@@ -358,6 +359,7 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -394,7 +396,7 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 
 # Shortcut to search news.
-def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_news(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
                 only_standard=False, extra_params={}):
     """
@@ -402,6 +404,7 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -438,7 +441,7 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 
 # Shortcut to search videos.
-def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_videos(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=10,
                   start=0, stop=None, domains=None, pause=2.0,
                   only_standard=False, extra_params={}):
     """
@@ -446,6 +449,7 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -482,7 +486,7 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 
 # Shortcut to search shop.
-def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_shop(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
                 only_standard=False, extra_params={}):
     """
@@ -490,6 +494,7 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -526,7 +531,7 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 
 # Shortcut to search books.
-def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_books(query, tld='com', lang='en', gl=None, tbs='0', safe='off', num=10,
                  start=0, stop=None, domains=None, pause=2.0,
                  only_standard=False, extra_params={}):
     """
@@ -534,6 +539,7 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -570,7 +576,7 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 
 # Shortcut to search apps.
-def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
+def search_apps(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
                 only_standard=False, extra_params={}):
     """
@@ -578,6 +584,7 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -615,13 +622,14 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 # Shortcut to single-item search.
 # Evaluates the iterator to return the single URL as a string.
-def lucky(query, tld='com', lang='en', tbs='0', safe='off',
+def lucky(query, tld='com', gl=None, lang='en', tbs='0', safe='off',
           only_standard=False, extra_params={}, tpe=''):
     """
     Shortcut to single-item search.
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -652,14 +660,13 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
     :rtype: str
     :return: URL found by Google.
     """
-    gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard,
-                 extra_params, tpe)
+    gen= search(query,tld,gl,lang,tbs,safe,1,0,1,None,0,only_standard,{},tpe)
     return next(gen)
 
 
 # Returns only the number of Google hits for the given search query.
 # This is the number reported by Google itself, NOT by scraping.
-def hits(query, tld='com', lang='en', tbs='0', safe='off',
+def hits(query, tld='com', gl=None, lang='en', tbs='0', safe='off',
          domains=None, extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google and return the number of hits.
@@ -668,6 +675,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
 
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
+    :param str gl: Parameter that defines from which country you want the search to originate(As google has updated that even with tld of different country search comes from local location)
     :param str lang: Language.
     :param str tbs: Time limits (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
@@ -710,7 +718,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     query = quote_plus(query + domain_query)
 
     # Check extra_params for overlapping
-    for builtin_param in ('hl', 'q', 'btnG', 'tbs', 'safe', 'tbm'):
+    for builtin_param in ('hl', 'q', 'btnK', 'tbs', 'safe', 'tbm'):
         if builtin_param in extra_params.keys():
             raise ValueError(
                 'GET parameter "%s" is overlapping with \
