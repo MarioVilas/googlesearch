@@ -391,7 +391,7 @@ def search_images(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld,gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='isch')
 
 
@@ -436,7 +436,7 @@ def search_news(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=1
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='nws')
 
 
@@ -481,7 +481,7 @@ def search_videos(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='vid')
 
 
@@ -526,7 +526,7 @@ def search_shop(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=1
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='shop')
 
 
@@ -571,7 +571,7 @@ def search_books(query, tld='com', lang='en', gl=None, tbs='0', safe='off', num=
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='bks')
 
 
@@ -616,7 +616,7 @@ def search_apps(query, tld='com', gl=None, lang='en', tbs='0', safe='off', num=1
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, gl, lang, tbs, safe, num, start, stop, domains,
                   pause, only_standard, extra_params, tpe='app')
 
 
