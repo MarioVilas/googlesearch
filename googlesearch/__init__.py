@@ -754,7 +754,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     elif len(hits_text_parts) == 2:
         # case `7 results`
         hits_count_str = hits_text_parts[0]
-    else: 
+    else:
         # other cases
         return 0
     return int(hits_count_str.replace(',', '').replace('.', ''))
