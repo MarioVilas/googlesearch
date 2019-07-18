@@ -744,7 +744,7 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     # Get the number of hits.
     tag = soup.find_all(attrs={"class": "sd", "id": "resultStats"})[0]
     # There are 2 possibilities here.
-    # `7 results` or 
+    # `7 results` or
     # `About 3,000,000,000 results`
     hits_text_parts = tag.text.split()
     hits_count_str = None
@@ -754,7 +754,8 @@ def hits(query, tld='com', lang='en', tbs='0', safe='off',
     elif len(hits_text_parts) == 2:
         # case `7 results`
         hits_count_str = hits_text_parts[0]
-    else: # other
+    else: 
+        # other cases
         return 0
     return int(hits_count_str.replace(',', '').replace('.', ''))
 
