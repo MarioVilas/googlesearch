@@ -32,7 +32,6 @@ import os
 import random
 import sys
 import time
-import math
 
 if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
