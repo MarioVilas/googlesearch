@@ -221,9 +221,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param str safe: Safe search.
     :param int num: Number of results per page.
     :param int start: First result to retrieve.
-    :param int or None stop: Last result to retrieve.
+    :param int stop: Last result to retrieve.
         Use None to keep searching forever.
-    :param list of str or None domains: A list of web domains to constrain
+    :param list domains: A list of web domains to constrain
         the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
@@ -234,11 +234,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param str country: Country or region to focus the search on. Similar to
         changing the TLD, but does not yield exactly the same results.
         Only Google knows why...
-    :param dict of str to str extra_params: A dictionary of extra HTTP GET
+    :param dict extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
         {'filter': '0'} which will append '&filter=0' to every query.
-    :param str or None user_agent: User agent for the HTTP requests.
+    :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
 
     :rtype: generator of str

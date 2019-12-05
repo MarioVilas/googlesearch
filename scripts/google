@@ -75,7 +75,7 @@ def main():
         '--safe', metavar='SAFE', type='string', default='off',
         help="kids safe search [default: off]")
     parser.add_option(
-        '--type', metavar='TYPE', type='string', default='', dest='tpe',
+        '--type', metavar='TYPE', type='string', default='search', dest='tpe',
         help="search type (search, images, videos, news, shopping, books,"
         " apps) [default: search]")
     parser.add_option(
