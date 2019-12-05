@@ -19,7 +19,9 @@ install:
 script:
  # Static analysis
  - pyflakes .
+ - pyflakes ./scripts/google
  - pycodestyle --statistics --count .
+ - pycodestyle --statistics --count ./scripts/google
 
 matrix:
   fast_finish: true
