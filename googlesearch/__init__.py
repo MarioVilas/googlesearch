@@ -70,15 +70,15 @@ __all__ = [
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
 url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s&cr=%(country)s"
 url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s"
+                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s&cr=%(country)s"
 url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
                  "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
-                 "tbm=%(tpe)s"
+                 "tbm=%(tpe)s&cr=%(country)s"
 url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&" \
                     "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
-                    "safe=%(safe)s&tbm=%(tpe)s"
+                    "safe=%(safe)s&tbm=%(tpe)s&cr=%(country)s"
 
 # Cookie jar. Stored at the user's home folder.
 home_folder = os.getenv('HOME')
@@ -187,7 +187,7 @@ def filter_result(link):
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, domains=None, pause=2.0, only_standard=False,
+           stop=None, domains=None, pause=2.0, only_standard=False, country='',
            extra_params={}, tpe='', user_agent=None):
     """
     Search the given query string using Google.
@@ -391,7 +391,7 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
 
 # Shortcut to search news.
 def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
-                start=0, stop=None, domains=None, pause=2.0,
+                start=0, stop=None, domains=None, pause=2.0, country='',
                 only_standard=False, extra_params={}):
     """
     Shortcut to search news.
@@ -429,7 +429,7 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :return: Generator (iterator) that yields found URLs.
         If the stop parameter is None the iterator will loop forever.
     """
-    return search(query, tld, lang, tbs, safe, num, start, stop, domains,
+    return search(query, tld, lang, tbs, safe, num, start, stop, domains, country,
                   pause, only_standard, extra_params, tpe='nws')
 
 
@@ -651,3 +651,4 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
     gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard,
                  extra_params, tpe)
     return next(gen)
+
