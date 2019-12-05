@@ -67,11 +67,5 @@ try:
 except ImportError:
     from distutils.core import setup
 
-# Get the long description from the readme file.
-try:
-    metadata['long_description'] = open(join(here, 'README.md'), 'rU').read()
-except Exception:
-    pass
-
 # Run the setup script.
 setup(**metadata)
