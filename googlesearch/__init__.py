@@ -64,7 +64,7 @@ __all__ = [
     'lucky',
 
     # Miscellaneous utility functions.
-    'get_random_user_agent',
+    'get_random_user_agent', 'get_tbs',
 ]
 
 # URL templates to make Google searches.
@@ -133,6 +133,22 @@ def get_random_user_agent():
     :return: Random user agent string.
     """
     return random.choice(user_agents_list)
+
+
+# Helper function to format the tbs parameter.
+def get_tbs(from_date, to_date):
+    """
+    Helper function to format the tbs parameter.
+
+    :param datetime.date from_date: Python date object.
+    :param datetime.date to_date: Python date object.
+
+    :rtype: str
+    :return: Dates encoded in tbs format.
+    """
+    from_date = from_date.strftime('%m/%d/%Y')
+    to_date = to_date.strftime('%m/%d/%Y')
+    return 'cdr:1,cd_min:%(from_date)s,cd_max:%(to_date)s' % vars()
 
 
 # Request the given URL and return the response page, using the cookie jar.
