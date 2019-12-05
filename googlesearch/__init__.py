@@ -187,8 +187,8 @@ def filter_result(link):
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, domains=None, pause=2.0, only_standard=False,
-           extra_params={}, tpe='', user_agent=None):
+           stop=None, domains=None, pause=2.0, extra_params={}, tpe='',
+           user_agent=None):
     """
     Search the given query string using Google.
 
@@ -207,10 +207,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -300,12 +296,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             anchors = soup.findAll('a')
         for a in anchors:
 
-            # Leave only the "standard" results if requested.
-            # Otherwise grab all possible links.
-            if only_standard and (
-                    not a.parent or a.parent.name.lower() != "h3"):
-                continue
-
             # Get the URL from the anchor tag.
             try:
                 link = a['href']
@@ -346,7 +336,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 # Beware, this does not return the image link.
 def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                   start=0, stop=None, pause=2.0, domains=None,
-                  only_standard=False, extra_params={}):
+                  extra_params={}):
     """
     Shortcut to search images.
 
@@ -367,10 +357,6 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -386,13 +372,13 @@ def search_images(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='isch')
+                  pause, extra_params, tpe='isch')
 
 
 # Shortcut to search news.
 def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
-                only_standard=False, extra_params={}):
+                extra_params={}):
     """
     Shortcut to search news.
 
@@ -411,10 +397,6 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -430,13 +412,13 @@ def search_news(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='nws')
+                  pause, extra_params, tpe='nws')
 
 
 # Shortcut to search videos.
 def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                   start=0, stop=None, domains=None, pause=2.0,
-                  only_standard=False, extra_params={}):
+                  extra_params={}):
     """
     Shortcut to search videos.
 
@@ -455,10 +437,6 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -474,13 +452,13 @@ def search_videos(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='vid')
+                  pause, extra_params, tpe='vid')
 
 
 # Shortcut to search shop.
 def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
-                only_standard=False, extra_params={}):
+                extra_params={}):
     """
     Shortcut to search shop.
 
@@ -499,10 +477,6 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -518,13 +492,13 @@ def search_shop(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='shop')
+                  pause, extra_params, tpe='shop')
 
 
 # Shortcut to search books.
 def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                  start=0, stop=None, domains=None, pause=2.0,
-                 only_standard=False, extra_params={}):
+                 extra_params={}):
     """
     Shortcut to search books.
 
@@ -543,10 +517,6 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -562,13 +532,13 @@ def search_books(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='bks')
+                  pause, extra_params, tpe='bks')
 
 
 # Shortcut to search apps.
 def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
                 start=0, stop=None, domains=None, pause=2.0,
-                only_standard=False, extra_params={}):
+                extra_params={}):
     """
     Shortcut to search apps.
 
@@ -587,10 +557,6 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -606,13 +572,13 @@ def search_apps(query, tld='com', lang='en', tbs='0', safe='off', num=10,
         If the stop parameter is None the iterator will loop forever.
     """
     return search(query, tld, lang, tbs, safe, num, start, stop, domains,
-                  pause, only_standard, extra_params, tpe='app')
+                  pause, extra_params, tpe='app')
 
 
 # Shortcut to single-item search.
 # Evaluates the iterator to return the single URL as a string.
 def lucky(query, tld='com', lang='en', tbs='0', safe='off',
-          only_standard=False, extra_params={}, tpe=''):
+          extra_params={}, tpe=''):
     """
     Shortcut to single-item search.
 
@@ -631,10 +597,6 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param bool only_standard: If True, only returns the standard results from
-        each page. If False, it returns every possible link from each page,
-        except for those that point back to Google itself. Defaults to False
-        for backwards compatibility with older versions of this module.
     :param dict of str to str extra_params: A dictionary of extra HTTP GET
         parameters, which must be URL encoded. For example if you don't want
         Google to filter similar results you can set the extra_params to
@@ -648,6 +610,5 @@ def lucky(query, tld='com', lang='en', tbs='0', safe='off',
     :rtype: str
     :return: URL found by Google.
     """
-    gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., only_standard,
-                 extra_params, tpe)
+    gen = search(query, tld, lang, tbs, safe, 1, 0, 1, 0., extra_params, tpe)
     return next(gen)
