@@ -35,7 +35,7 @@ import time
 
 if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
-    from urllib.request import Request, urlopen
+    from urllib.request import Request, ProxyHandler, urlopen, build_opener
     from urllib.parse import quote_plus, urlparse, parse_qs
 else:
     from cookielib import LWPCookieJar
@@ -153,13 +153,15 @@ def get_tbs(from_date, to_date):
 
 # Request the given URL and return the response page, using the cookie jar.
 # If the cookie jar is inaccessible, the errors are ignored.
-def get_page(url, user_agent=None):
+def get_page(url, user_agent=None, proxy=None):
     """
     Request the given URL and return the response page, using the cookie jar.
 
     :param str url: URL to retrieve.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param str proxy: A URL for a proxy you wish to use (e.g. http:localhost:8118)
+        Use None for no proxy.    
 
     :rtype: str
     :return: Web page retrieved for the given URL.
@@ -173,7 +175,12 @@ def get_page(url, user_agent=None):
     request = Request(url)
     request.add_header('User-Agent', user_agent)
     cookie_jar.add_cookie_header(request)
-    response = urlopen(request)
+    if proxy:
+        proxy_handler = ProxyHandler({'https': proxy})
+        opener = build_opener(proxy_handler)
+        response = opener.open(request)
+    else:
+        response = urlopen(request)
     cookie_jar.extract_cookies(response, request)
     html = response.read()
     response.close()
@@ -209,7 +216,7 @@ def filter_result(link):
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, domains=None, pause=2.0, tpe='', country='',
-           extra_params=None, user_agent=None):
+           extra_params=None, user_agent=None, proxy=None):
     """
     Search the given query string using Google.
 
@@ -240,6 +247,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         {'filter': '0'} which will append '&filter=0' to every query.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param str proxy: A URL for a proxy you wish to use (e.g. http:localhost:8118)
+        Use None for no proxy.
 
     :rtype: generator of str
     :return: Generator (iterator) that yields found URLs.
@@ -276,7 +285,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars(), user_agent)
+    get_page(url_home % vars(), user_agent, proxy)
 
     # Prepare the URL of the first request.
     if start:
@@ -309,7 +318,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url, user_agent)
+        html = get_page(url, user_agent, proxy)
 
         # Parse the response and get every anchored URL.
         if is_bs4:
