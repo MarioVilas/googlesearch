@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# Python bindings to the Google search engine
-# Copyright (c) 2009-2019, Mario Vilas
+# Copyright (c) 2009-2020, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +31,7 @@ import os
 import random
 import sys
 import time
+import ssl
 
 if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
@@ -55,11 +55,6 @@ __all__ = [
     # Main search function.
     'search',
 
-    # Specialized search functions.
-    'search_images', 'search_news',
-    'search_videos', 'search_shop',
-    'search_books', 'search_apps',
-
     # Shortcut for "get lucky" search.
     'lucky',
 
@@ -70,19 +65,19 @@ __all__ = [
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
 url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s&" \
+             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
              "cr=%(country)s"
 url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
-                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&tbm=%(tpe)s&" \
+                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&" \
                 "cr=%(country)s"
 url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
                  "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
-                 "tbm=%(tpe)s&cr=%(country)s"
+                 "cr=%(country)s"
 url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&" \
                     "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
-                    "safe=%(safe)s&tbm=%(tpe)s&cr=%(country)s"
+                    "safe=%(safe)s&cr=%(country)s"
 url_parameters = (
-    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'safe', 'tbm', 'cr')
+    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'safe', 'cr')
 
 # Cookie jar. Stored at the user's home folder.
 # If the cookie jar is inaccessible, the errors are ignored.
@@ -153,13 +148,15 @@ def get_tbs(from_date, to_date):
 
 # Request the given URL and return the response page, using the cookie jar.
 # If the cookie jar is inaccessible, the errors are ignored.
-def get_page(url, user_agent=None):
+def get_page(url, user_agent=None, verify_ssl=True):
     """
     Request the given URL and return the response page, using the cookie jar.
 
     :param str url: URL to retrieve.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param bool verify_ssl: Verify the SSL certificate to prevent
+        traffic interception attacks. Defaults to True.
 
     :rtype: str
     :return: Web page retrieved for the given URL.
@@ -173,7 +170,11 @@ def get_page(url, user_agent=None):
     request = Request(url)
     request.add_header('User-Agent', user_agent)
     cookie_jar.add_cookie_header(request)
-    response = urlopen(request)
+    if verify_ssl:
+        response = urlopen(request)
+    else:
+        context = ssl._create_unverified_context()
+        response = urlopen(request, context=context)
     cookie_jar.extract_cookies(response, request)
     html = response.read()
     response.close()
@@ -208,8 +209,8 @@ def filter_result(link):
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
-           stop=None, domains=None, pause=2.0, tpe='', country='',
-           extra_params=None, user_agent=None):
+           stop=None, pause=2.0, country='', extra_params=None,
+           user_agent=None, verify_ssl=True):
     """
     Search the given query string using Google.
 
@@ -223,14 +224,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param int start: First result to retrieve.
     :param int stop: Last result to retrieve.
         Use None to keep searching forever.
-    :param list domains: A list of web domains to constrain
-        the search.
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param str tpe: Search type (images, videos, news, shopping, books, apps)
-        Use the following values {videos: 'vid', images: 'isch',
-        news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
     :param str country: Country or region to focus the search on. Similar to
         changing the TLD, but does not yield exactly the same results.
         Only Google knows why...
@@ -240,6 +236,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         {'filter': '0'} which will append '&filter=0' to every query.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param bool verify_ssl: Verify the SSL certificate to prevent
+        traffic interception attacks. Defaults to True.
 
     :rtype: generator of str
     :return: Generator (iterator) that yields found URLs.
@@ -251,11 +249,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
 
     # Count the number of links yielded.
     count = 0
-
-    # Prepare domain list if it exists.
-    if domains:
-        query = query + ' ' + ' OR '.join(
-                                'site:' + domain for domain in domains)
 
     # Prepare the search string.
     query = quote_plus(query)
@@ -276,7 +269,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars(), user_agent)
+    get_page(url_home % vars(), user_agent, verify_ssl)
 
     # Prepare the URL of the first request.
     if start:
@@ -309,7 +302,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url, user_agent)
+        html = get_page(url, user_agent, verify_ssl)
 
         # Parse the response and get every anchored URL.
         if is_bs4:
@@ -367,75 +360,6 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             url = url_next_page % vars()
         else:
             url = url_next_page_num % vars()
-
-
-# Shortcut to search images.
-# Beware, this does not return the image link.
-def search_images(*args, **kwargs):
-    """
-    Shortcut to search images.
-
-    Same arguments and return value as the main search function.
-
-    :note: Beware, this does not return the image link.
-    """
-    kwargs['tpe'] = 'isch'
-    return search(*args, **kwargs)
-
-
-# Shortcut to search news.
-def search_news(*args, **kwargs):
-    """
-    Shortcut to search news.
-
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'nws'
-    return search(*args, **kwargs)
-
-
-# Shortcut to search videos.
-def search_videos(*args, **kwargs):
-    """
-    Shortcut to search videos.
-
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'vid'
-    return search(*args, **kwargs)
-
-
-# Shortcut to search shop.
-def search_shop(*args, **kwargs):
-    """
-    Shortcut to search shop.
-
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'shop'
-    return search(*args, **kwargs)
-
-
-# Shortcut to search books.
-def search_books(*args, **kwargs):
-    """
-    Shortcut to search books.
-
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'bks'
-    return search(*args, **kwargs)
-
-
-# Shortcut to search apps.
-def search_apps(*args, **kwargs):
-    """
-    Shortcut to search apps.
-
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'app'
-    return search(*args, **kwargs)
 
 
 # Shortcut to single-item search.

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# Python bindings to the Google search engine
-# Copyright (c) 2009-2019, Mario Vilas
+# Copyright (c) 2009-2020, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -66,18 +65,11 @@ def main():
         '--lang', metavar='LANGUAGE', type='string', default='en',
         help="produce results in the given language [default: en]")
     parser.add_option(
-        '--domains', metavar='DOMAINS', type='string', default='',
-        help="comma separated list of domains to constrain the search to")
-    parser.add_option(
         '--tbs', metavar='TBS', type='string', default='0',
         help="produce results from period [default: 0]")
     parser.add_option(
         '--safe', metavar='SAFE', type='string', default='off',
         help="kids safe search [default: off]")
-    parser.add_option(
-        '--type', metavar='TYPE', type='string', default='search', dest='tpe',
-        help="search type (search, images, videos, news, shopping, books,"
-        " apps) [default: search]")
     parser.add_option(
         '--country', metavar='COUNTRY', type='string', default='',
         help="region to restrict search on [default: not restricted]")
@@ -94,7 +86,10 @@ def main():
         '--pause', metavar='SECONDS', type='float', default=2.0,
         help="pause between HTTP requests [default: 2.0]")
     parser.add_option(
-        '--rua', metavar='USERAGENT', action='store_true', default=False,
+        '--rua', action='store_true', default=False,
+        help="Randomize the User-Agent [default: no]")
+    parser.add_option(
+        '--insecure', dest="verify_ssl", action='store_false', default=True,
         help="Randomize the User-Agent [default: no]")
     (options, args) = parser.parse_args()
     query = ' '.join(args)
@@ -105,26 +100,6 @@ def main():
         (k, v) for (k, v) in options.__dict__.items()
         if not k.startswith('_')]
     params = dict(params)
-
-    # Split the comma separated list of domains, if present.
-    if 'domains' in params:
-        if params['domains']:
-            domains = [x.strip() for x in params['domains'].split(',')]
-            if domains and domains != ['']:
-                params['domains'] = domains
-            params['domains'] = None
-        else:
-            params['domains'] = None
-
-    # Use a special search type if requested.
-    if 'tpe' in params:
-        tpe = params['tpe']
-        if tpe and tpe not in (
-                'search', 'images', 'videos', 'news',
-                'shopping', 'books', 'apps'):
-            parser.error("invalid type: %r" % tpe)
-        if tpe == 'search':
-            params['tpe'] = ''
 
     # Randomize the user agent if requested.
     if 'rua' in params and params.pop('rua'):
