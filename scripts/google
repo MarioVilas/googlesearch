@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Python bindings to the Google search engine
-# Copyright (c) 2009-2020, Mario Vilas
+# Copyright (c) 2009-2019, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,9 +59,6 @@ def main():
     )
     parser = OptionParser(formatter=formatter)
     parser.set_usage("%prog [options] query")
-    parser.add_option(
-        '--insecure', action="store_false", dest="verify_ssl", default=True,
-        help="disable SSL certificate verification")
     parser.add_option(
         '--tld', metavar='TLD', type='string', default='com',
         help="top level domain to use [default: com]")
