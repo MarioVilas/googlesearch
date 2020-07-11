@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Python bindings to the Google search engine
-# Copyright (c) 2009-2019, Mario Vilas
+# Copyright (c) 2009-2020, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Switch to True for debugging.
+# Example:
+#   import googlesearch
+#   googlesearch.DEBUG = True
+#   print(list(googlesearch.search_shop("test")))
+#
+DEBUG = False
+
 import os
 import random
 import sys
 import time
+import ssl
+import traceback
 
 if sys.version_info[0] > 2:
     from http.cookiejar import LWPCookieJar
@@ -57,7 +67,7 @@ __all__ = [
 
     # Specialized search functions.
     'search_images', 'search_news',
-    'search_videos', 'search_shop',
+    'search_videos', #'search_shop', disabled due to anti bot protections
     'search_books', 'search_apps',
 
     # Shortcut for "get lucky" search.
@@ -153,13 +163,15 @@ def get_tbs(from_date, to_date):
 
 # Request the given URL and return the response page, using the cookie jar.
 # If the cookie jar is inaccessible, the errors are ignored.
-def get_page(url, user_agent=None):
+def get_page(url, user_agent=None, verify_ssl=True):
     """
     Request the given URL and return the response page, using the cookie jar.
 
     :param str url: URL to retrieve.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param bool verify_ssl: Verify the SSL certificate to prevent
+        traffic interception attacks. Defaults to True.
 
     :rtype: str
     :return: Web page retrieved for the given URL.
@@ -168,19 +180,28 @@ def get_page(url, user_agent=None):
     :raises urllib2.URLError: An exception is raised on error.
     :raises urllib2.HTTPError: An exception is raised on error.
     """
+    if DEBUG:
+        sys.stderr.write("\n\n" + ("-" * 79) + "\n" + url + "\n" + ("-" * 79) + "\n")
     if user_agent is None:
         user_agent = USER_AGENT
     request = Request(url)
     request.add_header('User-Agent', user_agent)
     cookie_jar.add_cookie_header(request)
-    response = urlopen(request)
+    if verify_ssl:
+        response = urlopen(request)
+    else:
+        context = ssl._create_unverified_context()
+        response = urlopen(request, context=context)
     cookie_jar.extract_cookies(response, request)
     html = response.read()
     response.close()
     try:
         cookie_jar.save()
     except Exception:
-        pass
+        if DEBUG:
+            traceback.print_exc()
+    if DEBUG:
+        sys.stderr.write(html + "\n" + ("-" * 79) + "\n\n")
     return html
 
 
@@ -203,13 +224,14 @@ def filter_result(link):
 
     # On error, return None.
     except Exception:
-        pass
+        if DEBUG:
+            traceback.print_exc()
 
 
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, domains=None, pause=2.0, tpe='', country='',
-           extra_params=None, user_agent=None):
+           extra_params=None, user_agent=None, verify_ssl=True):
     """
     Search the given query string using Google.
 
@@ -240,6 +262,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         {'filter': '0'} which will append '&filter=0' to every query.
     :param str user_agent: User agent for the HTTP requests.
         Use None for the default.
+    :param bool verify_ssl: Verify the SSL certificate to prevent
+        traffic interception attacks. Defaults to True.
 
     :rtype: generator of str
     :return: Generator (iterator) that yields found URLs.
@@ -276,7 +300,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             )
 
     # Grab the cookie from the home page.
-    get_page(url_home % vars(), user_agent)
+    get_page(url_home % vars(), user_agent, verify_ssl)
 
     # Prepare the URL of the first request.
     if start:
@@ -309,9 +333,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         time.sleep(pause)
 
         # Request the Google Search results page.
-        html = get_page(url, user_agent)
+        html = get_page(url, user_agent, verify_ssl)
 
-        # Parse the response and get every anchored URL.
+        # Parse the HTML response.
         if is_bs4:
             soup = BeautifulSoup(html, 'html.parser')
         else:
@@ -405,15 +429,16 @@ def search_videos(*args, **kwargs):
     return search(*args, **kwargs)
 
 
-# Shortcut to search shop.
-def search_shop(*args, **kwargs):
-    """
-    Shortcut to search shop.
+# DISABLED due to anti bot protections
+# # Shortcut to search shop.
+# def search_shop(*args, **kwargs):
+#     """
+#     Shortcut to search shop.
 
-    Same arguments and return value as the main search function.
-    """
-    kwargs['tpe'] = 'shop'
-    return search(*args, **kwargs)
+#     Same arguments and return value as the main search function.
+#     """
+#     kwargs['tpe'] = 'shop'
+#     return search(*args, **kwargs)
 
 
 # Shortcut to search books.
