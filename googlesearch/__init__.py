@@ -32,7 +32,7 @@
 # Example:
 #   import googlesearch
 #   googlesearch.DEBUG = True
-#   print(list(googlesearch.search("test")))
+#   print(list(googlesearch.search_shop("test")))
 #
 DEBUG = False
 
@@ -250,9 +250,9 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param float pause: Lapse to wait between HTTP requests.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
-    :param str tpe: Search type (images, videos, news, books, apps)
+    :param str tpe: Search type (images, videos, news, shopping, books, apps)
         Use the following values {videos: 'vid', images: 'isch',
-        news: 'nws', books: 'bks', applications: 'app'}
+        news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
     :param str country: Country or region to focus the search on. Similar to
         changing the TLD, but does not yield exactly the same results.
         Only Google knows why...
