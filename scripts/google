@@ -108,7 +108,13 @@ def main():
 
     # Split the comma separated list of domains, if present.
     if 'domains' in params:
-        params['domains'] = [x.strip() for x in params['domains'].split(',')]
+        if params['domains']:
+            domains = [x.strip() for x in params['domains'].split(',')]
+            if domains and domains != ['']:
+                params['domains'] = domains
+            params['domains'] = None
+        else:
+            params['domains'] = None
 
     # Use a special search type if requested.
     if 'tpe' in params:
