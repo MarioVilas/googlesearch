@@ -286,7 +286,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     # Loop until we reach the maximum result, if any (otherwise, loop forever).
     while not stop or count < stop:
 
-        # Remeber last count to detect the end of results.
+        # Remember last count to detect the end of results.
         last_count = count
 
         # Append extra GET parameters to the URL.
