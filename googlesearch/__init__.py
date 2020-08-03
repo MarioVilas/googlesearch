@@ -66,18 +66,18 @@ __all__ = [
 url_home = "https://www.google.%(tld)s/"
 url_search = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
              "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
-             "cr=%(country)s"
+             "cr=%(country)s&filter=0"
 url_next_page = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
                 "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&" \
-                "cr=%(country)s"
+                "cr=%(country)s&filter=0"
 url_search_num = "https://www.google.%(tld)s/search?hl=%(lang)s&q=%(query)s&" \
                  "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
-                 "cr=%(country)s"
+                 "cr=%(country)s&filter=0"
 url_next_page_num = "https://www.google.%(tld)s/search?hl=%(lang)s&" \
                     "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
-                    "safe=%(safe)s&cr=%(country)s"
+                    "safe=%(safe)s&cr=%(country)s&filter=0"
 url_parameters = (
-    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'safe', 'cr')
+    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'safe', 'cr', 'filter')
 
 # Cookie jar. Stored at the user's home folder.
 # If the cookie jar is inaccessible, the errors are ignored.
