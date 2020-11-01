@@ -1,4 +1,4 @@
-googlesearch
+Google Search
 ============
 
 Google search from Python.
