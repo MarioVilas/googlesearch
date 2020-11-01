@@ -64,15 +64,15 @@ __all__ = [
 
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
-url_search = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&q=%(query)s&" \
-             "btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
+url_search = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
+             "q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
              "cr=%(country)s&filter=0"
-url_next_page = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&q=%(query)s&" \
-                "start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&" \
+url_next_page = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
+                "q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&" \
                 "cr=%(country)s&filter=0"
-url_search_num = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&q=%(query)s&" \
-                 "num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
-                 "cr=%(country)s&filter=0"
+url_search_num = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
+                 "q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&" \
+                 "&safe=%(safe)scr=%(country)s&filter=0"
 url_next_page_num = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
                     "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
                     "safe=%(safe)s&cr=%(country)s&filter=0"
