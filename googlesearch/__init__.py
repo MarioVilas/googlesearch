@@ -309,6 +309,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
             soup = BeautifulSoup(html, 'html.parser')
         else:
             soup = BeautifulSoup(html)
+
+        # Get rid of any table view at the top of the page
+        for table in soup.find_all('table'):
+            table.clear()
+
         try:
             anchors = soup.find(id='search').findAll('a')
             # Sometimes (depending on the User-agent) there is
