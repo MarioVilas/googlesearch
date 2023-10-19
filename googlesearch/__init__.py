@@ -224,7 +224,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param int start: First result to retrieve.
     :param int stop: Last result to retrieve.
         Use None to keep searching forever.
-    :param float pause: Lapse to wait between HTTP requests.
+    :param float pause: Lapse to wait between HTTP requests, measured in seconds.
         A lapse too long will make the search slow, but a lapse too short may
         cause Google to block your IP. Your mileage may vary!
     :param str country: Country or region to focus the search on. Similar to
