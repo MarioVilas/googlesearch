@@ -65,19 +65,19 @@ __all__ = [
 # URL templates to make Google searches.
 url_home = "https://www.google.%(tld)s/"
 url_search = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
-             "q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&safe=%(safe)s&" \
+             "q=%(query)s&btnG=Google+Search&tbs=%(tbs)s&tbm=(tbm)&safe=%(safe)s&" \
              "cr=%(country)s&filter=0"
 url_next_page = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
-                "q=%(query)s&start=%(start)d&tbs=%(tbs)s&safe=%(safe)s&" \
+                "q=%(query)s&start=%(start)d&tbs=%(tbs)s&tbm=(tbm)&safe=%(safe)s&" \
                 "cr=%(country)s&filter=0"
 url_search_num = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
-                 "q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&" \
+                 "q=%(query)s&num=%(num)d&btnG=Google+Search&tbs=%(tbs)s&tbm=(tbm)&" \
                  "&safe=%(safe)scr=%(country)s&filter=0"
 url_next_page_num = "https://www.google.%(tld)s/search?lr=lang_%(lang)s&" \
-                    "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&" \
+                    "q=%(query)s&num=%(num)d&start=%(start)d&tbs=%(tbs)s&tbm=(tbm)&" \
                     "safe=%(safe)s&cr=%(country)s&filter=0"
 url_parameters = (
-    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'safe', 'cr', 'filter')
+    'hl', 'q', 'num', 'btnG', 'start', 'tbs', 'tbm', 'safe', 'cr', 'filter')
 
 # Cookie jar. Stored at the user's home folder.
 # If the cookie jar is inaccessible, the errors are ignored.
@@ -208,7 +208,7 @@ def filter_result(link):
 
 
 # Returns a generator that yields URLs.
-def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
+def search(query, tld='com', lang='en', tbs='0', tbm='' , safe='off', num=10, start=0,
            stop=None, pause=2.0, country='', extra_params=None,
            user_agent=None, verify_ssl=True):
     """
@@ -217,7 +217,11 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
     :param str query: Query string. Must NOT be url-encoded.
     :param str tld: Top level domain.
     :param str lang: Language.
-    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+    :param str tbs: Time limits (i.e "app" => Applications,
+    "blg" => Blogs, "bks" => Books, "dsc" => Discussions,
+    "isch" => Images, "nws" => News, "pts" => Patents,
+    "plcs" => Places, "rcp" => Recipes, "shop" => Shopping, "vid" => Videos).
+    :param str tbm: Tab Selection (i.e "qdr:h" => last hour,
         "qdr:d" => last 24 hours, "qdr:m" => last month).
     :param str safe: Safe search.
     :param int num: Number of results per page.
