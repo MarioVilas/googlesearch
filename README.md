@@ -5,6 +5,8 @@ Google search from Python.
 
 https://python-googlesearch.readthedocs.io/en/latest/
 
+**Note**: this project is not affiliated with Google in any way.
+
 Usage example
 -------------
 
