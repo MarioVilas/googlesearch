@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009-2020, Mario Vilas
+# Copyright (c) 2009-2024, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,10 @@ metadata = dict(
     package_data={'googlesearch': ['user_agents.txt.gz']},
     include_package_data=True,
     version="3.0.0",
-    description="Python bindings to the Google search engine.",
+    description="Unofficial Python bindings to the Google search engine. Not affiliated with Google.",
     author="Mario Vilas",
     author_email="mvilas@gmail.com",
-    url="http://breakingcode.wordpress.com/",
+    url="https://github.com/MarioVilas/googlesearch",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
