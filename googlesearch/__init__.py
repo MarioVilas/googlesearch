@@ -240,7 +240,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         Use None for the default.
     :param bool verify_ssl: Verify the SSL certificate to prevent
         traffic interception attacks. Defaults to True.
-    :param bool include_google_links: Includes links pointing to a Google domain. Defaults to True.
+    :param bool include_google_links: Includes links pointing to a Google domain.
+        Defaults to False.
 
     :rtype: generator of str
     :return: Generator (iterator) that yields found URLs.
