@@ -184,25 +184,27 @@ def get_page(url, user_agent=None, verify_ssl=True):
         pass
     return html
 
-
 # Filter links found in the Google result pages HTML code.
 # Returns None if the link doesn't yield a valid result.
-def filter_result(link):
+def filter_result(link, include_google_links=False):
     try:
-
         # Decode hidden URLs.
         if link.startswith('/url?'):
             o = urlparse(link, 'http')
-            link = parse_qs(o.query)['q'][0]
+            link = parse_qs(o.query).get('q')[0]
 
-        # Valid results are absolute URLs not pointing to a Google domain,
-        # like images.google.com or googleusercontent.com for example.
-        # TODO this could be improved!
         o = urlparse(link, 'http')
-        if o.netloc and 'google' not in o.netloc:
-            return link
 
-    # On error, return None.
+        # Check if the link is an absolute URL.
+        if not o.netloc:
+            return None
+
+        # If excluding Google links, return None if 'google' is in the domain.
+        if not include_google_links and 'google' in o.netloc:
+            return None
+
+        return link
+
     except Exception:
         pass
 
@@ -210,7 +212,7 @@ def filter_result(link):
 # Returns a generator that yields URLs.
 def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
            stop=None, pause=2.0, country='', extra_params=None,
-           user_agent=None, verify_ssl=True):
+           user_agent=None, verify_ssl=True, include_google_links=False):
     """
     Search the given query string using Google.
 
@@ -238,6 +240,8 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
         Use None for the default.
     :param bool verify_ssl: Verify the SSL certificate to prevent
         traffic interception attacks. Defaults to True.
+    :param bool include_google_links: Includes links pointing to a Google domain.
+        Defaults to False.
 
     :rtype: generator of str
     :return: Generator (iterator) that yields found URLs.
@@ -330,7 +334,7 @@ def search(query, tld='com', lang='en', tbs='0', safe='off', num=10, start=0,
                 continue
 
             # Filter invalid links and links pointing to Google itself.
-            link = filter_result(link)
+            link = filter_result(link, include_google_links)
             if not link:
                 continue
 

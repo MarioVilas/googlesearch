@@ -91,6 +91,9 @@ def main():
     parser.add_option(
         '--insecure', dest="verify_ssl", action='store_false', default=True,
         help="Randomize the User-Agent [default: no]")
+    parser.add_option(
+        '--include', dest="include_google_links", action='store_true', default=False,
+        help="Include links pointing to Google [default: no]")
     (options, args) = parser.parse_args()
     query = ' '.join(args)
     if not query:
